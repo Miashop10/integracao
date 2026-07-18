@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miashop — Treinamentos e Integração</title>
+<style>
+:root{
+  --laranja:#F18634;
+  --laranja-escuro:#d96f1e;
+  --laranja-claro:#fdeedd;
+  --fundo:#f6f7f9;
+  --branco:#ffffff;
+  --texto:#232a32;
+  --cinza:#6b7683;
+  --linha:#e5e8ec;
+  --verde:#2e9e5b;
+  --verde-claro:#e3f4ea;
+  --vermelho:#d64545;
+  --azul:#2c6ea0;
+  --azul-claro:#e4eef6;
+  --sombra:0 4px 18px rgba(35,42,50,.07);
+  --raio:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--fundo);color:var(--texto);line-height:1.55;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+input,textarea,select{font-family:inherit;font-size:14px;color:var(--texto)}
+img{max-width:100%}
+
+/* ---------- topo ---------- */
+header{background:var(--branco);border-bottom:3px solid var(--laranja);position:sticky;top:0;z-index:50}
+.topo{max-width:1060px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.marca{display:flex;align-items:center;gap:10px}
+.marca .logo{width:38px;height:38px;border-radius:10px;background:var(--laranja);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
+.marca h1{font-size:17px;font-weight:800}
+.marca small{display:block;font-size:11px;color:var(--cinza);font-weight:500}
+.btn{border:none;border-radius:10px;padding:9px 16px;font-size:13.5px;font-weight:600;transition:.15s}
+.btn-laranja{background:var(--laranja);color:#fff}
+.btn-laranja:hover{background:var(--laranja-escuro)}
+.btn-borda{background:var(--branco);border:1.5px solid var(--linha);color:var(--texto)}
+.btn-borda:hover{border-color:var(--laranja);color:var(--laranja)}
+.btn-verde{background:var(--verde);color:#fff}
+.btn-vermelho{background:#fbeaea;color:var(--vermelho)}
+.btn-mini{padding:5px 10px;font-size:12px;border-radius:8px}
+
+/* ---------- layout ---------- */
+main{max-width:1060px;margin:0 auto;padding:26px 18px 60px}
+.tela{display:none}
+.tela.ativa{display:block;animation:sobe .25s ease}
+@keyframes sobe{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.migalha{font-size:13px;color:var(--cinza);margin-bottom:16px}
+.migalha a{color:var(--laranja);cursor:pointer;font-weight:600;text-decoration:none}
+h2.titulo-tela{font-size:22px;font-weight:800;margin-bottom:6px}
+p.sub-tela{color:var(--cinza);font-size:14px;margin-bottom:22px}
+
+/* ---------- home: trilhas ---------- */
+.trilhas{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:8px}
+.trilha{background:var(--branco);border:1.5px solid var(--linha);border-radius:var(--raio);padding:26px 22px;box-shadow:var(--sombra);cursor:pointer;transition:.15s;text-align:left}
+.trilha:hover{border-color:var(--laranja);transform:translateY(-3px)}
+.trilha .icone{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px}
+.trilha h3{font-size:17px;font-weight:800;margin-bottom:6px}
+.trilha p{font-size:13px;color:var(--cinza)}
+.trilha .qtd{display:inline-block;margin-top:12px;background:var(--laranja-claro);color:var(--laranja-escuro);font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+
+/* ---------- lista de treinamentos ---------- */
+.cartao{background:var(--branco);border:1.5px solid var(--linha);border-radius:var(--raio);box-shadow:var(--sombra)}
+.item-trein{display:flex;align-items:center;gap:14px;padding:16px 18px;border-bottom:1px solid var(--linha);cursor:pointer;transition:.12s}
+.item-trein:last-child{border-bottom:none}
+.item-trein:hover{background:#fbfbfc}
+.item-trein .num{min-width:34px;height:34px;border-radius:10px;background:var(--laranja-claro);color:var(--laranja-escuro);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px}
+.item-trein .info{flex:1}
+.item-trein .info b{font-size:15px}
+.item-trein .info span{display:block;font-size:12.5px;color:var(--cinza)}
+.item-trein .seta{color:var(--laranja);font-size:18px;font-weight:800}
+
+/* ---------- visualização do treinamento ---------- */
+.cabeca-trein{background:var(--branco);border:1.5px solid var(--linha);border-radius:var(--raio);padding:22px;margin-bottom:18px;box-shadow:var(--sombra)}
+.cabeca-trein .tag{display:inline-block;background:var(--laranja-claro);color:var(--laranja-escuro);font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;margin-bottom:10px}
+.cabeca-trein h2{font-size:21px;font-weight:800;margin-bottom:6px}
+.cabeca-trein p{font-size:14px;color:var(--cinza)}
+.passo{background:var(--branco);border:1.5px solid var(--linha);border-radius:var(--raio);margin-bottom:14px;box-shadow:var(--sombra);overflow:hidden}
+.passo-cabeca{display:flex;align-items:center;gap:12px;padding:15px 18px;cursor:pointer;user-select:none}
+.passo-cabeca .bolinha{min-width:30px;height:30px;border-radius:50%;background:var(--laranja);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.passo-cabeca b{flex:1;font-size:15px}
+.passo-cabeca .mais{color:var(--cinza);font-size:20px;transition:.2s}
+.passo.aberto .passo-cabeca .mais{transform:rotate(45deg);color:var(--laranja)}
+.passo-corpo{display:none;padding:0 18px 18px 60px}
+.passo.aberto .passo-corpo{display:block}
+.passo-corpo p{font-size:14.5px;white-space:pre-wrap;margin-bottom:12px}
+.galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:12px}
+.galeria img{width:100%;height:130px;object-fit:cover;border-radius:10px;border:1px solid var(--linha);cursor:pointer;transition:.12s}
+.galeria img:hover{transform:scale(1.02)}
+.video-caixa{margin-bottom:12px}
+.video-caixa iframe{width:100%;aspect-ratio:16/9;border:none;border-radius:10px;background:#000}
+.rodape-trein{background:var(--verde-claro);border:1.5px solid #bfe3cd;border-radius:var(--raio);padding:20px;text-align:center;margin-top:20px}
+.rodape-trein b{display:block;font-size:15px;margin-bottom:10px;color:#1d6b3c}
+.rodape-trein input{padding:10px 14px;border:1.5px solid #bfe3cd;border-radius:10px;width:min(320px,100%);margin-bottom:10px}
+
+/* ---------- lightbox ---------- */
+#luz{display:none;position:fixed;inset:0;background:rgba(20,24,28,.9);z-index:200;align-items:center;justify-content:center;padding:20px}
+#luz.aberta{display:flex}
+#luz img{max-width:95vw;max-height:92vh;border-radius:10px}
+
+/* ---------- admin ---------- */
+.abas-admin{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.aba-admin{padding:8px 16px;border-radius:10px;border:1.5px solid var(--linha);background:var(--branco);font-size:13.5px;font-weight:600}
+.aba-admin.ativa{background:var(--laranja);border-color:var(--laranja);color:#fff}
+.form-bloco{background:var(--branco);border:1.5px solid var(--linha);border-radius:var(--raio);padding:20px;margin-bottom:16px;box-shadow:var(--sombra)}
+.form-bloco label{display:block;font-size:12.5px;font-weight:700;color:var(--cinza);margin-bottom:5px;text-transform:uppercase;letter-spacing:.03em}
+.form-bloco input[type=text],.form-bloco textarea,.form-bloco select{width:100%;padding:10px 12px;border:1.5px solid var(--linha);border-radius:10px;margin-bottom:14px;background:#fff}
+.form-bloco textarea{min-height:90px;resize:vertical}
+.form-bloco input:focus,.form-bloco textarea:focus,.form-bloco select:focus{outline:none;border-color:var(--laranja)}
+.passo-editor{border:1.5px dashed var(--linha);border-radius:12px;padding:16px;margin-bottom:14px;background:#fbfbfc}
+.passo-editor .barra{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.passo-editor .barra b{font-size:13px;color:var(--laranja-escuro)}
+.mini-galeria{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.mini-galeria .mini{position:relative}
+.mini-galeria img{width:70px;height:70px;object-fit:cover;border-radius:8px;border:1px solid var(--linha)}
+.mini-galeria .video-chip{width:auto;padding:6px 10px;background:var(--azul-claro);color:var(--azul);border-radius:8px;font-size:12px;font-weight:600;display:flex;align-items:center;height:34px}
+.mini .x{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--vermelho);color:#fff;border:none;font-size:11px;line-height:1}
+.tabela{width:100%;border-collapse:collapse;font-size:13.5px}
+.tabela th{text-align:left;padding:10px 12px;background:#fbfbfc;border-bottom:1.5px solid var(--linha);font-size:12px;text-transform:uppercase;color:var(--cinza);letter-spacing:.03em}
+.tabela td{padding:10px 12px;border-bottom:1px solid var(--linha)}
+.acoes-td{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ---------- modal senha ---------- */
+#modal-senha{display:none;position:fixed;inset:0;background:rgba(20,24,28,.55);z-index:150;align-items:center;justify-content:center;padding:20px}
+#modal-senha.aberta{display:flex}
+.caixa-senha{background:var(--branco);border-radius:var(--raio);padding:26px;width:min(360px,100%);box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center}
+.caixa-senha h3{margin-bottom:6px;font-size:17px}
+.caixa-senha p{font-size:13px;color:var(--cinza);margin-bottom:14px}
+.caixa-senha input{width:100%;padding:11px 14px;border:1.5px solid var(--linha);border-radius:10px;margin-bottom:12px;text-align:center;font-size:16px}
+.caixa-senha .linha-btn{display:flex;gap:8px}
+.caixa-senha .linha-btn .btn{flex:1}
+
+/* ---------- toast / loading ---------- */
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--texto);color:#fff;padding:11px 20px;border-radius:12px;font-size:14px;font-weight:600;display:none;z-index:300;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#toast.erro{background:var(--vermelho)}
+#toast.ok{background:var(--verde)}
+.girando{display:inline-block;width:15px;height:15px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:gira .7s linear infinite;vertical-align:-3px;margin-right:6px}
+.girando.escuro{border-color:rgba(0,0,0,.15);border-top-color:var(--laranja)}
+@keyframes gira{to{transform:rotate(360deg)}}
+.vazio{text-align:center;padding:40px 20px;color:var(--cinza);font-size:14px}
+.carregando-tela{text-align:center;padding:50px 20px;color:var(--cinza)}
+
+@media(max-width:640px){
+  .passo-corpo{padding:0 16px 16px 16px}
+  .marca h1{font-size:15px}
+}
+@media print{header,.btn,.rodape-trein{display:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topo">
+    <div class="marca" style="cursor:pointer" onclick="irHome()">
+      <div class="logo">M</div>
+      <div><h1>Miashop <span style="color:var(--laranja)">Treinamentos</span><small>Integração e capacitação de colaboradores</small></h1></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-borda" id="btn-admin" onclick="abrirAdmin()">🔐 Área do Gestor</button>
+      <button class="btn btn-vermelho btn-mini" id="btn-sair" style="display:none" onclick="sairAdmin()">Sair</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ================= HOME ================= -->
+  <section class="tela ativa" id="tela-home">
+    <h2 class="titulo-tela">Escolha a sua trilha</h2>
+    <p class="sub-tela">Todo o conteúdo de integração e treinamento da Miashop, organizado por cargo. Nada se perde: tudo fica salvo na nuvem e pode ser acessado de qualquer computador.</p>
+    <div class="trilhas">
+      <button class="trilha" onclick="abrirCargo('Gerente')">
+        <div class="icone" style="background:var(--azul-claro)">👔</div>
+        <h3>Gerentes</h3>
+        <p>Manual de integração de novos colaboradores, rotinas de gestão e responsabilidades da liderança.</p>
+        <span class="qtd" id="qtd-Gerente">—</span>
+      </button>
+      <button class="trilha" onclick="abrirCargo('Vendedor')">
+        <div class="icone" style="background:var(--laranja-claro)">🛍️</div>
+        <h3>Vendedores</h3>
+        <p>Padrão de atendimento Miashop, produtos, canais de venda e boas práticas no salão.</p>
+        <span class="qtd" id="qtd-Vendedor">—</span>
+      </button>
+      <button class="trilha" onclick="abrirCargo('Operador de Caixa')">
+        <div class="icone" style="background:var(--verde-claro)">💰</div>
+        <h3>Operadores de Caixa</h3>
+        <p>Fechamento de caixa passo a passo, depósitos, despesas, e-commerce e quebra de caixa.</p>
+        <span class="qtd" id="qtd-Operador de Caixa">—</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================ LISTA POR CARGO ================ -->
+  <section class="tela" id="tela-lista">
+    <div class="migalha"><a onclick="irHome()">Início</a> › <span id="migalha-cargo"></span></div>
+    <h2 class="titulo-tela" id="lista-titulo"></h2>
+    <p class="sub-tela">Toque em um treinamento para abrir o conteúdo completo.</p>
+    <div class="cartao" id="lista-treinamentos"></div>
+  </section>
+
+  <!-- ================ VISUALIZAÇÃO ================ -->
+  <section class="tela" id="tela-ver">
+    <div class="migalha"><a onclick="irHome()">Início</a> › <a onclick="voltarLista()" id="migalha-cargo2"></a> › <span id="migalha-trein"></span></div>
+    <div id="ver-conteudo"></div>
+  </section>
+
+  <!-- ================ ADMIN ================ -->
+  <section class="tela" id="tela-admin">
+    <div class="migalha"><a onclick="irHome()">Início</a> › Área do Gestor</div>
+    <h2 class="titulo-tela">Área do Gestor</h2>
+    <p class="sub-tela">Crie e edite treinamentos, acompanhe quem já concluiu cada conteúdo e gerencie a senha de acesso.</p>
+    <div class="abas-admin">
+      <button class="aba-admin ativa" data-aba="admin-lista" onclick="abaAdmin(this)">📚 Treinamentos</button>
+      <button class="aba-admin" data-aba="admin-editor" onclick="abaAdmin(this)">➕ Novo / Editar</button>
+      <button class="aba-admin" data-aba="admin-prog" onclick="abaAdmin(this)">✅ Conclusões</button>
+      <button class="aba-admin" data-aba="admin-senha" onclick="abaAdmin(this)">🔑 Senha</button>
+    </div>
+
+    <div id="admin-lista" class="painel-admin">
+      <div class="cartao" style="overflow-x:auto">
+        <table class="tabela" id="tabela-admin">
+          <thead><tr><th>Cargo</th><th>Treinamento</th><th>Passos</th><th>Criado em</th><th>Ações</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="admin-editor" class="painel-admin" style="display:none">
+      <div class="form-bloco">
+        <input type="hidden" id="ed-id">
+        <label>Cargo (trilha)</label>
+        <select id="ed-cargo">
+          <option value="Gerente">Gerente</option>
+          <option value="Vendedor">Vendedor</option>
+          <option value="Operador de Caixa">Operador de Caixa</option>
+        </select>
+        <label>Título do treinamento</label>
+        <input type="text" id="ed-titulo" placeholder="Ex.: Fechamento de Caixa — Passo a Passo">
+        <label>Descrição curta</label>
+        <textarea id="ed-descricao" placeholder="O que o colaborador vai aprender neste treinamento"></textarea>
+        <label>Passos / Módulos</label>
+        <div id="ed-passos"></div>
+        <button class="btn btn-borda" onclick="adicionarPasso()">➕ Adicionar passo</button>
+        <div style="margin-top:18px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-laranja" id="btn-salvar-trein" onclick="salvarTreinamento()">💾 Salvar treinamento</button>
+          <button class="btn btn-borda" onclick="limparEditor()">Limpar</button>
+        </div>
+        <p style="font-size:12px;color:var(--cinza);margin-top:12px">💡 Fotos e vídeos enviados aqui são salvos automaticamente no Google Drive. Vídeos também podem ser adicionados por link do YouTube ou do Drive.</p>
+      </div>
+    </div>
+
+    <div id="admin-prog" class="painel-admin" style="display:none">
+      <div class="cartao" style="overflow-x:auto">
+        <table class="tabela" id="tabela-prog">
+          <thead><tr><th>Data</th><th>Colaborador</th><th>Cargo</th><th>Treinamento concluído</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="admin-senha" class="painel-admin" style="display:none">
+      <div class="form-bloco" style="max-width:420px">
+        <label>Senha atual</label>
+        <input type="text" id="sn-atual" placeholder="Senha atual">
+        <label>Nova senha</label>
+        <input type="text" id="sn-nova" placeholder="Nova senha (mín. 3 caracteres)">
+        <button class="btn btn-laranja" onclick="trocarSenha()">Trocar senha</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- lightbox de fotos -->
+<div id="luz" onclick="this.classList.remove('aberta')"><img id="luz-img" src="" alt="Foto ampliada"></div>
+
+<!-- modal senha -->
+<div id="modal-senha">
+  <div class="caixa-senha">
+    <h3>🔐 Área do Gestor</h3>
+    <p>Digite a senha master para gerenciar os treinamentos.</p>
+    <input type="password" id="input-senha" placeholder="Senha master" onkeydown="if(event.key==='Enter')confirmarSenha()">
+    <div class="linha-btn">
+      <button class="btn btn-borda" onclick="fecharModalSenha()">Cancelar</button>
+      <button class="btn btn-laranja" id="btn-entrar" onclick="confirmarSenha()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   CONFIGURAÇÃO — cole aqui a URL /exec do seu Apps Script
+   ============================================================ */
+var API_URL = 'https://script.google.com/macros/s/AKfycby9GNbJeSx4yO4VTPh-DIuurjpIAmjSc_2o2WtRHvhlvAE8pgHaTPajh-4J8Yjn9lozYw/exec';
+
+/* ============================================================ */
+var estado = {
+  treinamentos: [],      // todos os treinamentos carregados
+  cargoAtual: '',
+  treinAtual: null,
+  senhaMaster: '',       // fica só na memória enquanto a página está aberta
+  editorPassos: []
+};
+
+/* ---------------- utilidades ---------------- */
+function esc(t){var d=document.createElement('div');d.textContent=String(t==null?'':t);return d.innerHTML;}
+function toast(msg,tipo){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.className=tipo||'';t.style.display='block';
+  clearTimeout(t._tm);t._tm=setTimeout(function(){t.style.display='none';},3200);
+}
+function api(payload){
+  return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)})
+    .then(function(r){return r.json();});
+}
+function mostrarTela(id){
+  document.querySelectorAll('.tela').forEach(function(s){s.classList.remove('ativa');});
+  document.getElementById(id).classList.add('ativa');
+  window.scrollTo({top:0});
+}
+
+/* ---------------- carregamento ---------------- */
+function carregarTudo(){
+  if(API_URL.indexOf('COLE_AQUI')===0){
+    toast('Configure a API_URL no index.html com a URL do Apps Script','erro');
+    return Promise.resolve();
+  }
+  return api({acao:'listar'}).then(function(r){
+    if(!r.ok){toast('Erro ao carregar: '+r.erro,'erro');return;}
+    estado.treinamentos=r.treinamentos||[];
+    atualizarContadores();
+  }).catch(function(){toast('Sem conexão com o servidor. Verifique a URL da API.','erro');});
+}
+function atualizarContadores(){
+  ['Gerente','Vendedor','Operador de Caixa'].forEach(function(c){
+    var n=estado.treinamentos.filter(function(t){return t.cargo===c;}).length;
+    var el=document.getElementById('qtd-'+c);
+    if(el)el.textContent=n+(n===1?' treinamento':' treinamentos');
+  });
+}
+
+/* ---------------- navegação ---------------- */
+function irHome(){mostrarTela('tela-home');carregarTudo();}
+function abrirCargo(cargo){
+  estado.cargoAtual=cargo;
+  var nomes={'Gerente':'Trilha dos Gerentes','Vendedor':'Trilha dos Vendedores','Operador de Caixa':'Trilha dos Operadores de Caixa'};
+  document.getElementById('lista-titulo').textContent=nomes[cargo]||cargo;
+  document.getElementById('migalha-cargo').textContent=cargo;
+  var lista=estado.treinamentos.filter(function(t){return t.cargo===cargo;});
+  var cont=document.getElementById('lista-treinamentos');
+  if(lista.length===0){
+    cont.innerHTML='<div class="vazio">Ainda não há treinamentos nesta trilha.<br>O gestor pode criar um na <b>Área do Gestor</b>.</div>';
+  }else{
+    cont.innerHTML=lista.map(function(t,i){
+      return '<div class="item-trein" onclick="abrirTreinamento(\''+t.id+'\')">'+
+        '<div class="num">'+(i+1)+'</div>'+
+        '<div class="info"><b>'+esc(t.titulo)+'</b><span>'+esc(t.descricao)+'</span></div>'+
+        '<div class="seta">›</div></div>';
+    }).join('');
+  }
+  mostrarTela('tela-lista');
+}
+function voltarLista(){abrirCargo(estado.cargoAtual);}
+
+/* ---------------- visualização ---------------- */
+function videoEmbed(url){
+  url=String(url||'').trim();
+  var m=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{6,})/);
+  if(m)return 'https://www.youtube.com/embed/'+m[1];
+  var d=url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
+  if(d)return 'https://drive.google.com/file/d/'+d[1]+'/preview';
+  return url; // já pode ser um /preview
+}
+function abrirTreinamento(id){
+  var t=estado.treinamentos.find(function(x){return x.id===id;});
+  if(!t)return;
+  estado.treinAtual=t;
+  document.getElementById('migalha-cargo2').textContent=t.cargo;
+  document.getElementById('migalha-trein').textContent=t.titulo;
+  var h='<div class="cabeca-trein"><span class="tag">'+esc(t.cargo)+'</span>'+
+        '<h2>'+esc(t.titulo)+'</h2><p>'+esc(t.descricao)+'</p></div>';
+  h+=(t.passos||[]).map(function(p,i){
+    var corpo='<p>'+esc(p.texto)+'</p>';
+    if(p.fotos&&p.fotos.length){
+      corpo+='<div class="galeria">'+p.fotos.map(function(f){
+        return '<img src="'+esc(f)+'" alt="Foto do passo" loading="lazy" onclick="ampliar(\''+esc(f)+'\')">';
+      }).join('')+'</div>';
+    }
+    if(p.videos&&p.videos.length){
+      corpo+=p.videos.map(function(v){
+        return '<div class="video-caixa"><iframe src="'+esc(videoEmbed(v))+'" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe></div>';
+      }).join('');
+    }
+    return '<div class="passo'+(i===0?' aberto':'')+'">'+
+      '<div class="passo-cabeca" onclick="this.parentElement.classList.toggle(\'aberto\')">'+
+      '<div class="bolinha">'+(i+1)+'</div><b>'+esc(p.titulo)+'</b><span class="mais">+</span></div>'+
+      '<div class="passo-corpo">'+corpo+'</div></div>';
+  }).join('');
+  h+='<div class="rodape-trein"><b>✅ Terminou este treinamento?</b>'+
+     '<input type="text" id="nome-colab" placeholder="Digite seu nome completo"><br>'+
+     '<button class="btn btn-verde" onclick="concluir()">Registrar conclusão</button></div>';
+  document.getElementById('ver-conteudo').innerHTML=h;
+  mostrarTela('tela-ver');
+}
+function ampliar(src){
+  document.getElementById('luz-img').src=src;
+  document.getElementById('luz').classList.add('aberta');
+}
+function concluir(){
+  var nome=(document.getElementById('nome-colab').value||'').trim();
+  if(!nome){toast('Digite seu nome para registrar a conclusão','erro');return;}
+  var t=estado.treinAtual;
+  api({acao:'progresso_salvar',colaborador:nome,cargo:t.cargo,treinamentoId:t.id,treinamentoTitulo:t.titulo})
+    .then(function(r){
+      if(r.ok){toast('Conclusão registrada. Parabéns, '+nome+'! 🎉','ok');document.getElementById('nome-colab').value='';}
+      else toast('Erro: '+r.erro,'erro');
+    }).catch(function(){toast('Falha de conexão','erro');});
+}
+
+/* ---------------- admin: acesso ---------------- */
+function abrirAdmin(){
+  if(estado.senhaMaster){entrarAdmin();return;}
+  document.getElementById('modal-senha').classList.add('aberta');
+  setTimeout(function(){document.getElementById('input-senha').focus();},100);
+}
+function fecharModalSenha(){document.getElementById('modal-senha').classList.remove('aberta');document.getElementById('input-senha').value='';}
+function confirmarSenha(){
+  var s=document.getElementById('input-senha').value;
+  if(!s)return;
+  var b=document.getElementById('btn-entrar');
+  b.innerHTML='<span class="girando"></span>Verificando...';b.disabled=true;
+  api({acao:'login',senha:s}).then(function(r){
+    b.innerHTML='Entrar';b.disabled=false;
+    if(r.ok){estado.senhaMaster=s;fecharModalSenha();entrarAdmin();}
+    else toast('Senha incorreta','erro');
+  }).catch(function(){b.innerHTML='Entrar';b.disabled=false;toast('Falha de conexão','erro');});
+}
+function entrarAdmin(){
+  document.getElementById('btn-sair').style.display='inline-block';
+  montarTabelaAdmin();
+  mostrarTela('tela-admin');
+}
+function sairAdmin(){
+  estado.senhaMaster='';
+  document.getElementById('btn-sair').style.display='none';
+  irHome();toast('Você saiu da Área do Gestor');
+}
+function abaAdmin(btn){
+  document.querySelectorAll('.aba-admin').forEach(function(b){b.classList.remove('ativa');});
+  btn.classList.add('ativa');
+  document.querySelectorAll('.painel-admin').forEach(function(p){p.style.display='none';});
+  document.getElementById(btn.dataset.aba).style.display='block';
+  if(btn.dataset.aba==='admin-prog')carregarProgresso();
+  if(btn.dataset.aba==='admin-lista')montarTabelaAdmin();
+}
+
+/* ---------------- admin: lista ---------------- */
+function montarTabelaAdmin(){
+  var tb=document.querySelector('#tabela-admin tbody');
+  if(estado.treinamentos.length===0){tb.innerHTML='<tr><td colspan="5" class="vazio">Nenhum treinamento cadastrado.</td></tr>';return;}
+  tb.innerHTML=estado.treinamentos.map(function(t){
+    return '<tr><td>'+esc(t.cargo)+'</td><td><b>'+esc(t.titulo)+'</b></td>'+
+      '<td>'+(t.passos?t.passos.length:0)+'</td><td>'+esc(t.dataCriacao)+'</td>'+
+      '<td><div class="acoes-td">'+
+      '<button class="btn btn-borda btn-mini" onclick="editarTreinamento(\''+t.id+'\')">✏️ Editar</button>'+
+      '<button class="btn btn-vermelho btn-mini" onclick="excluirTreinamento(\''+t.id+'\')">🗑️ Excluir</button>'+
+      '</div></td></tr>';
+  }).join('');
+}
+function excluirTreinamento(id){
+  var t=estado.treinamentos.find(function(x){return x.id===id;});
+  if(!t)return;
+  if(!confirm('Excluir o treinamento "'+t.titulo+'"?\n(Ele sai do sistema, mas a linha fica marcada na planilha — nada é apagado de verdade.)'))return;
+  api({acao:'excluir',id:id,senha:estado.senhaMaster}).then(function(r){
+    if(r.ok){toast('Treinamento excluído','ok');carregarTudo().then(montarTabelaAdmin);}
+    else toast('Erro: '+r.erro,'erro');
+  });
+}
+
+/* ---------------- admin: editor ---------------- */
+function limparEditor(){
+  document.getElementById('ed-id').value='';
+  document.getElementById('ed-titulo').value='';
+  document.getElementById('ed-descricao').value='';
+  document.getElementById('ed-cargo').value='Gerente';
+  estado.editorPassos=[];
+  desenharPassos();
+}
+function editarTreinamento(id){
+  var t=estado.treinamentos.find(function(x){return x.id===id;});
+  if(!t)return;
+  document.getElementById('ed-id').value=t.id;
+  document.getElementById('ed-titulo').value=t.titulo;
+  document.getElementById('ed-descricao').value=t.descricao;
+  document.getElementById('ed-cargo').value=t.cargo;
+  estado.editorPassos=JSON.parse(JSON.stringify(t.passos||[]));
+  desenharPassos();
+  document.querySelectorAll('.aba-admin').forEach(function(b){
+    if(b.dataset.aba==='admin-editor')abaAdmin(b);
+  });
+}
+function adicionarPasso(){
+  estado.editorPassos.push({titulo:'',texto:'',fotos:[],videos:[]});
+  desenharPassos();
+}
+function desenharPassos(){
+  var cont=document.getElementById('ed-passos');
+  cont.innerHTML=estado.editorPassos.map(function(p,i){
+    var midias='';
+    (p.fotos||[]).forEach(function(f,fi){
+      midias+='<div class="mini"><img src="'+esc(f)+'"><button class="x" onclick="removerMidia('+i+',\'fotos\','+fi+')">✕</button></div>';
+    });
+    (p.videos||[]).forEach(function(v,vi){
+      midias+='<div class="mini"><div class="video-chip">🎬 Vídeo '+(vi+1)+'</div><button class="x" onclick="removerMidia('+i+',\'videos\','+vi+')">✕</button></div>';
+    });
+    return '<div class="passo-editor">'+
+      '<div class="barra"><b>Passo '+(i+1)+'</b><div style="display:flex;gap:6px">'+
+      '<button class="btn btn-borda btn-mini" onclick="moverPasso('+i+',-1)">↑</button>'+
+      '<button class="btn btn-borda btn-mini" onclick="moverPasso('+i+',1)">↓</button>'+
+      '<button class="btn btn-vermelho btn-mini" onclick="removerPasso('+i+')">Remover</button></div></div>'+
+      '<label>Título do passo</label>'+
+      '<input type="text" value="'+esc(p.titulo).replace(/"/g,'&quot;')+'" oninput="estado.editorPassos['+i+'].titulo=this.value" placeholder="Ex.: 1. Conte o dinheiro do caixa">'+
+      '<label>Orientação (texto completo)</label>'+
+      '<textarea oninput="estado.editorPassos['+i+'].texto=this.value" placeholder="Explique este passo em detalhes...">'+esc(p.texto)+'</textarea>'+
+      '<div class="mini-galeria">'+midias+'</div>'+
+      '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+      '<button class="btn btn-borda btn-mini" onclick="document.getElementById(\'arq-'+i+'\').click()">📷 Enviar foto/vídeo</button>'+
+      '<button class="btn btn-borda btn-mini" onclick="addVideoLink('+i+')">🔗 Vídeo por link</button>'+
+      '<input type="file" id="arq-'+i+'" accept="image/*,video/*" style="display:none" onchange="enviarArquivo('+i+',this)">'+
+      '</div><div id="status-arq-'+i+'" style="font-size:12px;color:var(--cinza);margin-top:6px"></div>'+
+      '</div>';
+  }).join('');
+  if(estado.editorPassos.length===0)cont.innerHTML='<p style="font-size:13px;color:var(--cinza);margin-bottom:12px">Nenhum passo ainda. Clique em "Adicionar passo".</p>';
+}
+function removerPasso(i){estado.editorPassos.splice(i,1);desenharPassos();}
+function moverPasso(i,dir){
+  var j=i+dir;
+  if(j<0||j>=estado.editorPassos.length)return;
+  var tmp=estado.editorPassos[i];estado.editorPassos[i]=estado.editorPassos[j];estado.editorPassos[j]=tmp;
+  desenharPassos();
+}
+function removerMidia(i,tipo,idx){estado.editorPassos[i][tipo].splice(idx,1);desenharPassos();}
+function addVideoLink(i){
+  var url=prompt('Cole o link do vídeo (YouTube ou Google Drive):');
+  if(!url)return;
+  estado.editorPassos[i].videos=estado.editorPassos[i].videos||[];
+  estado.editorPassos[i].videos.push(url.trim());
+  desenharPassos();
+}
+function enviarArquivo(i,input){
+  var arq=input.files[0];
+  if(!arq)return;
+  var ehVideo=arq.type.indexOf('video')===0;
+  var maxMB=ehVideo?25:8;
+  if(arq.size>maxMB*1024*1024){
+    toast((ehVideo?'Vídeo':'Foto')+' muito grande (máx. '+maxMB+' MB). Para vídeos maiores, suba no Drive ou YouTube e use "Vídeo por link".','erro');
+    input.value='';return;
+  }
+  var st=document.getElementById('status-arq-'+i);
+  st.innerHTML='<span class="girando escuro"></span>Enviando para o Google Drive...';
+  var leitor=new FileReader();
+  leitor.onload=function(){
+    var base64=String(leitor.result).split(',')[1];
+    api({acao:'upload',senha:estado.senhaMaster,base64:base64,mime:arq.type,nome:arq.name})
+      .then(function(r){
+        st.innerHTML='';input.value='';
+        if(!r.ok){toast('Erro no envio: '+r.erro,'erro');return;}
+        if(r.tipo==='video'){
+          estado.editorPassos[i].videos=estado.editorPassos[i].videos||[];
+          estado.editorPassos[i].videos.push(r.urlVideo);
+        }else{
+          estado.editorPassos[i].fotos=estado.editorPassos[i].fotos||[];
+          estado.editorPassos[i].fotos.push(r.urlFoto);
+        }
+        desenharPassos();
+        toast((r.tipo==='video'?'Vídeo':'Foto')+' salvo no Drive ✓','ok');
+      }).catch(function(){st.innerHTML='';toast('Falha de conexão no envio','erro');});
+  };
+  leitor.readAsDataURL(arq);
+}
+function salvarTreinamento(){
+  var titulo=(document.getElementById('ed-titulo').value||'').trim();
+  if(!titulo){toast('Dê um título ao treinamento','erro');return;}
+  if(estado.editorPassos.length===0){toast('Adicione pelo menos um passo','erro');return;}
+  var b=document.getElementById('btn-salvar-trein');
+  b.innerHTML='<span class="girando"></span>Salvando...';b.disabled=true;
+  api({
+    acao:'salvar',
+    senha:estado.senhaMaster,
+    id:document.getElementById('ed-id').value||null,
+    cargo:document.getElementById('ed-cargo').value,
+    titulo:titulo,
+    descricao:document.getElementById('ed-descricao').value,
+    passos:estado.editorPassos
+  }).then(function(r){
+    b.innerHTML='💾 Salvar treinamento';b.disabled=false;
+    if(r.ok){toast('Treinamento salvo ✓','ok');limparEditor();carregarTudo().then(montarTabelaAdmin);}
+    else toast('Erro: '+r.erro,'erro');
+  }).catch(function(){b.innerHTML='💾 Salvar treinamento';b.disabled=false;toast('Falha de conexão','erro');});
+}
+
+/* ---------------- admin: progresso ---------------- */
+function carregarProgresso(){
+  var tb=document.querySelector('#tabela-prog tbody');
+  tb.innerHTML='<tr><td colspan="4" class="carregando-tela"><span class="girando escuro"></span> Carregando...</td></tr>';
+  api({acao:'progresso_listar',senha:estado.senhaMaster}).then(function(r){
+    if(!r.ok){tb.innerHTML='<tr><td colspan="4" class="vazio">'+esc(r.erro)+'</td></tr>';return;}
+    if(!r.registros.length){tb.innerHTML='<tr><td colspan="4" class="vazio">Nenhuma conclusão registrada ainda.</td></tr>';return;}
+    tb.innerHTML=r.registros.map(function(p){
+      return '<tr><td>'+esc(p.data)+'</td><td><b>'+esc(p.colaborador)+'</b></td><td>'+esc(p.cargo)+'</td><td>'+esc(p.treinamentoTitulo)+'</td></tr>';
+    }).join('');
+  });
+}
+
+/* ---------------- admin: senha ---------------- */
+function trocarSenha(){
+  var atual=document.getElementById('sn-atual').value;
+  var nova=document.getElementById('sn-nova').value;
+  api({acao:'trocar_senha',senhaAtual:atual,senhaNova:nova}).then(function(r){
+    if(r.ok){toast('Senha trocada ✓','ok');estado.senhaMaster=nova;
+      document.getElementById('sn-atual').value='';document.getElementById('sn-nova').value='';}
+    else toast('Erro: '+r.erro,'erro');
+  });
+}
+
+/* ---------------- início ---------------- */
+carregarTudo();
+</script>
+</body>
+</html>
