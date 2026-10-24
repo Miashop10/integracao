@@ -761,7 +761,17 @@ async function api(action, data) {
     try {
       r = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body), redirect: 'follow' });
     } catch (e) { throw new Error('Sem conexão com o servidor. Verifique a internet.'); }
-    try { res = await r.json(); } catch (e) { throw new Error('Resposta inválida do servidor. Confira a implantação do Apps Script.'); }
+    const txt = await r.text();
+    try { res = JSON.parse(txt); } catch (e) {
+      let dica = 'Confira a implantação do Apps Script.';
+      if (/accounts\.google\.com|ServiceLogin|Fazer login|Sign in/i.test(txt) || /accounts\.google\.com/.test(r.url)) dica = 'O App da Web está pedindo login do Google: na implantação, "Quem pode acessar" precisa ser QUALQUER PESSOA.';
+      else if (/doPost/i.test(txt)) dica = 'A função doPost não foi encontrada: cole o Code.gs inteiro, SALVE e crie uma NOVA VERSÃO da implantação.';
+      else if (/autoriza|authoriz|permiss/i.test(txt)) dica = 'O script ainda não foi autorizado: rode a função setup no editor do Apps Script e autorize.';
+      else if (/not found|não encontrad|404/i.test(txt)) dica = 'URL do App da Web não encontrada: confira o ID da implantação.';
+      const m = txt.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160);
+      console.error('Resposta do servidor:', txt.slice(0, 2000));
+      throw new Error('Resposta inválida do servidor. ' + dica + (m ? ' [' + m + ']' : ''));
+    }
   }
   if (res && res.auth) { logout(true); throw new Error(res.erro || 'Sessão expirada.'); }
   return res;
