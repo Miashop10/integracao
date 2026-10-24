@@ -108,13 +108,16 @@ main.view{flex:1;padding:26px 20px 60px;max-width:1500px;width:100%;margin:0 aut
 .ed .list{position:sticky;top:84px;max-height:calc(100vh - 110px);display:flex;flex-direction:column}
 .ed .list .lh{display:flex;gap:6px;padding:12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .ed .list .items{overflow:auto;padding:8px}
-.li{display:flex;gap:10px;align-items:center;padding:7px;border-radius:12px;cursor:pointer;border:2px solid transparent;position:relative}
+.li{display:flex;gap:10px;align-items:center;padding:7px 36px 7px 7px;border-radius:12px;cursor:pointer;border:2px solid transparent;position:relative}
 .li:hover{background:var(--soft)}
 .li.on{border-color:var(--rosa);background:#FFF5FA}
 .li.off{opacity:.45}
 .li .n{font-family:Jost,Futura,'Century Gothic','Trebuchet MS',sans-serif;font-weight:700;font-size:13px;width:20px;text-align:right;color:var(--muted)}
 .li .mini{width:104px;flex:none;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
 .li .t{font-size:12.5px;font-weight:700;line-height:1.25;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.li .del{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--red);display:none;place-items:center;cursor:pointer;padding:0}
+.li .del svg{width:15px;height:15px}
+.li:hover .del,.li.on .del{display:grid}
 .li.drop-b{box-shadow:0 3px 0 0 var(--rosa)}.li.drop-a{box-shadow:0 -3px 0 0 var(--rosa)}
 .ed .prev{padding:16px;position:sticky;top:84px}
 .ed .prev .scaler{border-radius:12px;box-shadow:0 18px 40px -28px rgba(0,0,0,.5);border:1px solid var(--line)}
@@ -267,13 +270,13 @@ table.t .acts{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 /* capa */
 .sl-capa{background:#FBFAF7}
 .sl-capa .cv{position:absolute;left:130px;top:0;bottom:0;width:900px;display:flex;flex-direction:column;justify-content:center;z-index:2}
-.sl-capa .cv .lg{width:560px;margin-bottom:70px}
+.sl-capa .cv .lg{width:400px;margin-bottom:60px}
 .sl-capa .cv .gb{width:150px;height:12px;border-radius:99px;background:var(--grad);margin-bottom:40px}
 .sl-capa .cv h1{font-family:Jost,Futura,'Century Gothic','Trebuchet MS',sans-serif;font-weight:700;font-size:calc(96px*var(--k));line-height:1.02;letter-spacing:-.015em;margin:0}
 .sl-capa .cv p{font-size:calc(36px*var(--k));color:var(--tx2);margin:30px 0 0;font-weight:600;line-height:1.35}
 .sl-capa .cv .pill{align-self:flex-start;margin-top:56px}
-.sl-capa .bagart{position:absolute;right:120px;top:120px;bottom:120px;width:740px}
-.sl-capa .bagart svg{width:100%;height:100%}
+.sl-capa .capart{position:absolute;right:0;top:0;bottom:0;width:820px;overflow:hidden}
+.sl-capa .capart svg{width:100%;height:100%}
 .sl-capa .pic{top:110px;bottom:110px;right:110px;width:760px;border-radius:44px}
 .sl-capa .blob{position:absolute;right:-180px;top:-180px;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(236,42,144,.08),rgba(236,42,144,0) 65%)}
 
@@ -486,6 +489,12 @@ const BAG_ART = `<svg viewBox="0 0 600 720" preserveAspectRatio="xMidYMid meet">
   <path d="M190 158A110 110 0 0 1 410 158" fill="none" stroke="#161616" stroke-width="28"/>
   <path d="M22 150H578L553 640Q549 700 486 700H114Q51 700 47 640Z" fill="#fff" stroke="#161616" stroke-width="28" stroke-linejoin="round"/>
   <g clip-path="url(#bagIn)"><g transform="translate(58 184) scale(.8067 .6025)">${WAVES(12)}</g></g></svg>`;
+const CAPA_ART = `<svg viewBox="0 0 820 1080" preserveAspectRatio="xMaxYMid slice" fill="none" stroke-linecap="round">
+  <path d="M420 -60C470 260 760 380 900 760" stroke="#A6538A" stroke-width="46" stroke-opacity=".85"/>
+  <path d="M300 -60C340 300 700 470 760 1140" stroke="#D2395D" stroke-width="58" stroke-opacity=".85"/>
+  <path d="M190 -60C230 360 600 560 600 1140" stroke="#C9DD3C" stroke-width="72" stroke-opacity=".9"/>
+  <path d="M70 -60C120 420 440 640 430 1140" stroke="#EC2A90" stroke-width="58" stroke-opacity=".9"/>
+  <path d="M60 260C100 580 270 800 250 1140" stroke="#00AEEF" stroke-width="44" stroke-opacity=".85"/></svg>`;
 const LINE_WAVES = (color, op) => `<svg viewBox="0 0 900 1160" preserveAspectRatio="xMidYMid slice" fill="none" stroke="${color}" stroke-opacity="${op}" stroke-linecap="round">
   <path d="M120 -40C220 260 640 420 860 1200" stroke-width="70"/>
   <path d="M330 -40C400 200 900 360 980 900" stroke-width="44"/>
@@ -537,7 +546,7 @@ function slideHTML(s, n, total) {
           <img class="lg" src="${LOGO_PRETA}" alt="Miashop"><div class="gb"></div>
           <h1>${fmt(s.titulo)}</h1>${s.subtitulo ? `<p>${fmt(s.subtitulo)}</p>` : ''}
           ${s.secao ? `<span class="pill">${s.icone ? ic(s.icone) : ''}${esc(s.secao)}</span>` : ''}</div>
-        ${hasImg ? pic : `<div class="bagart">${BAG_ART}</div>`}<div class="foot"></div>`;
+        ${hasImg ? pic : `<div class="capart">${CAPA_ART}</div>`}<div class="foot"></div>`;
       return wrap(`sl-capa ${hasImg ? 'img-r' : ''}`, style, inner);
     case 'secao': {
       const lime = p.on !== '#FFFFFF';
@@ -1176,12 +1185,13 @@ function renderEditor() {
         <button class="btn sm icon" id="bDup" title="Duplicar">${ic('_copy')}</button>
         <button class="btn sm icon" id="bUp" title="Mover para cima">${ic('_up')}</button>
         <button class="btn sm icon" id="bDown" title="Mover para baixo">${ic('_down')}</button>
-        <button class="btn sm icon danger" id="bDel" title="Excluir">${ic('_trash')}</button></div>
+        <button class="btn sm danger" id="bDel" title="Apagar o slide selecionado">${ic('_trash')}Apagar</button></div>
       <div class="items" id="edList"></div></aside>
     <section class="pane prev"><div class="bar">
         <button class="btn pri" id="bSave" disabled>${ic('_save')}Salvar</button>
         <button class="btn" id="bPlay">${ic('_play')}Apresentar daqui</button>
         <button class="btn sm" id="bMore">${ic('_down2')}Backup</button>
+        <button class="btn sm danger" id="bDel2">${ic('_trash')}Apagar slide</button>
         <span class="st" id="edSt"></span></div>
       <div id="edPrev"></div>
       <p class="hint" style="margin:12px 2px 0">Dica: use <b>**texto**</b> para destacar palavras na cor do slide. O tamanho do texto se ajusta sozinho para caber.</p></section>
@@ -1190,11 +1200,8 @@ function renderEditor() {
   $('#bDup').onclick = () => { const c = JSON.parse(JSON.stringify(curSlide())); c.id = uid(); S.draft.splice(S.sel + 1, 0, c); S.sel++; setDirty(true); edRefresh(true); };
   $('#bUp').onclick = () => moveSlide(S.sel, S.sel - 1);
   $('#bDown').onclick = () => moveSlide(S.sel, S.sel + 1);
-  $('#bDel').onclick = async () => {
-    if (S.draft.length <= 1) return toast('A apresentação precisa ter pelo menos 1 slide.', 'err');
-    if (!(await ask('Excluir slide?', `“${esc(curSlide().titulo || 'Sem título')}” será removido ao salvar.`, 'Excluir', true))) return;
-    S.draft.splice(S.sel, 1); S.sel = Math.max(0, S.sel - 1); setDirty(true); edRefresh(true);
-  };
+  $('#bDel').onclick = () => deleteSlide(S.sel);
+  $('#bDel2').onclick = () => deleteSlide(S.sel);
   $('#bSave').onclick = saveDeck;
   $('#bPlay').onclick = () => { const act = S.draft.filter(s => s.ativo !== false); const cur = curSlide(); const i = act.indexOf(cur); openPresent(act.length ? act : S.draft, i < 0 ? 0 : i); };
   $('#bMore').onclick = backupMenu;
@@ -1223,6 +1230,13 @@ document.addEventListener('click', e => {
   b.closest('.ov').remove();
   S.draft.splice(S.sel + 1, 0, newSlide(b.dataset.l)); S.sel++; setDirty(true); edRefresh(true);
 });
+async function deleteSlide(i) {
+  if (S.draft.length <= 1) return toast('A apresentação precisa ter pelo menos 1 slide.', 'err');
+  const sl = S.draft[i]; if (!sl) return;
+  if (!(await ask('Apagar slide?', `Slide ${i + 1}: “${esc(sl.titulo || 'Sem título')}”.<br>Ele some da apresentação quando você clicar em <b>Salvar</b>.`, 'Apagar', true))) return;
+  S.draft.splice(i, 1); S.sel = Math.min(Math.max(0, i <= S.sel ? S.sel - 1 : S.sel), S.draft.length - 1);
+  setDirty(true); edRefresh(true); toast('Slide apagado. Clique em Salvar para confirmar.');
+}
 function moveSlide(from, to) {
   if (to < 0 || to >= S.draft.length || from === to) return;
   const [s] = S.draft.splice(from, 1); S.draft.splice(to, 0, s); S.sel = to; setDirty(true); edRefresh(true);
@@ -1235,11 +1249,12 @@ function renderEdList() {
   const tot = S.draft.length;
   box.innerHTML = S.draft.map((s, i) => `<div class="li ${i === S.sel ? 'on' : ''} ${s.ativo === false ? 'off' : ''}" data-i="${i}" draggable="true">
       <div class="n">${i + 1}</div><div class="mini">${scaler(slideHTML(s, i + 1, tot))}</div>
-      <div class="t">${esc(s.titulo || '(sem título)')}${s.ativo === false ? '<br><span class="hint">oculto</span>' : ''}</div></div>`).join('');
+      <div class="t">${esc(s.titulo || '(sem título)')}${s.ativo === false ? '<br><span class="hint">oculto</span>' : ''}</div>
+      <button class="del" title="Apagar slide">${ic('_trash')}</button></div>`).join('');
   mountScalers(box);
   let dragFrom = null;
   $$('.li', box).forEach(li => {
-    li.onclick = () => { S.sel = +li.dataset.i; edRefresh(true); };
+    li.onclick = e => { if (e.target.closest('.del')) { e.stopPropagation(); deleteSlide(+li.dataset.i); return; } S.sel = +li.dataset.i; edRefresh(true); };
     li.ondragstart = e => { dragFrom = +li.dataset.i; e.dataTransfer.effectAllowed = 'move'; };
     li.ondragover = e => { e.preventDefault(); const r = li.getBoundingClientRect(); const after = e.clientY > r.top + r.height / 2; li.classList.toggle('drop-b', after); li.classList.toggle('drop-a', !after); };
     li.ondragleave = () => li.classList.remove('drop-a', 'drop-b');
