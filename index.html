@@ -175,6 +175,32 @@ table.t .acts{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 .spin{width:38px;height:38px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--rosa);animation:sp 1s linear infinite;margin:0 auto}
 @keyframes sp{to{transform:rotate(360deg)}}
 
+/* ---------- busca ---------- */
+.sbtn{display:flex;align-items:center;gap:10px;min-width:230px;border:1px solid var(--line);background:var(--soft);border-radius:10px;padding:8px 12px;color:var(--muted);cursor:pointer;font-weight:700;font-size:14px}
+.sbtn:hover{border-color:#cfcbc2;color:var(--ink)}
+.sbtn svg{width:18px;height:18px}
+.sbtn kbd{margin-left:auto;font:inherit;font-size:11px;border:1px solid var(--line);border-radius:6px;padding:1px 6px;background:#fff}
+.sov{position:fixed;inset:0;background:rgba(22,22,22,.55);z-index:400;display:flex;justify-content:center;align-items:flex-start;padding:9vh 16px 16px}
+.sbox{background:#fff;border-radius:18px;width:100%;max-width:720px;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 30px 80px -20px rgba(0,0,0,.55);overflow:hidden}
+.sin{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.sin svg{width:22px;height:22px;color:var(--rosa);flex:none}
+.sin input{flex:1;border:0;outline:0;font-size:19px;font-weight:600;background:transparent}
+.sin .x{border:0;background:var(--soft);border-radius:8px;padding:6px;cursor:pointer;display:grid;place-items:center}
+.sin .x svg{width:16px;height:16px;color:var(--muted)}
+.sres{overflow:auto;padding:8px}
+.sr{display:flex;gap:14px;align-items:flex-start;padding:12px;border-radius:12px;cursor:pointer;border:2px solid transparent}
+.sr:hover,.sr.on{background:#FFF5FA;border-color:#F8C6E0}
+.sr .no{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-family:Jost,Futura,sans-serif;font-weight:700;color:#fff;font-size:17px}
+.sr .tt{font-weight:800;font-size:15px;margin-bottom:3px}
+.sr .sn{font-size:14px;color:var(--muted);line-height:1.45}
+.sr .sn .w{display:block;margin-top:2px}
+.sr .fl{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#A4A19A;margin-right:6px}
+mark{background:#FFE15A;color:inherit;border-radius:3px;padding:0 2px}
+.sl mark{background:#FFE15A;color:#161616;border-radius:6px;padding:0 6px;box-shadow:0 0 0 4px #FFE15A}
+.sempty{padding:30px 20px;text-align:center;color:var(--muted)}
+.sfoot{padding:10px 16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap}
+@media(max-width:760px){.sbtn{min-width:0}.sbtn span,.sbtn kbd{display:none}}
+
 /* ---------- modo apresentação ---------- */
 #pres{position:fixed;inset:0;background:#0d0d0d;z-index:100;user-select:none}
 #pres .stage{position:absolute;inset:0;overflow:hidden}
@@ -359,13 +385,13 @@ table.t .acts{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 .sl .tl .rows .k-dica .ct{color:var(--tx2)}
 
 /* encerramento */
-.sl-encerramento{background:#161616;color:#fff}
+.sl-encerramento{background:linear-gradient(135deg,#F6A04D 0%,#F18634 45%,#EC6B3B 100%);color:#fff}
 .sl-encerramento .ev{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 200px;z-index:2}
 .sl-encerramento .ev .lg{width:520px;margin-bottom:80px}
 .sl-encerramento .ev h1{font-family:Jost,Futura,'Century Gothic','Trebuchet MS',sans-serif;font-weight:700;font-size:calc(104px*var(--k));line-height:1.04;margin:0;letter-spacing:-.015em}
-.sl-encerramento .ev p{font-size:calc(36px*var(--k));opacity:.78;margin:32px 0 0;font-weight:600;line-height:1.4}
-.sl-encerramento .ev .gb{width:180px;height:12px;border-radius:99px;background:var(--grad);margin-top:60px}
-.sl-encerramento .wv{position:absolute;inset:0;opacity:.5}
+.sl-encerramento .ev p{font-size:calc(36px*var(--k));opacity:.95;margin:32px 0 0;font-weight:600;line-height:1.4}
+.sl-encerramento .ev .gb{width:180px;height:12px;border-radius:99px;background:#fff;margin-top:60px}
+.sl-encerramento .wv{position:absolute;inset:0}
 .sl-encerramento .wv svg{width:100%;height:100%}
 </style>
 </head>
@@ -495,6 +521,10 @@ const CAPA_ART = `<svg viewBox="0 0 820 1080" preserveAspectRatio="xMaxYMid slic
   <path d="M330 1140L710 -60" stroke="#C9DD3C" stroke-width="72"/>
   <path d="M470 1140L850 -60" stroke="#D2395D" stroke-width="64"/>
   <path d="M600 1140L980 -60" stroke="#A6538A" stroke-width="56"/></svg>`;
+const FIM_COLS = ['#00AEEF', '#EC2A90', '#C9DD3C', '#D2395D', '#A6538A'];
+const FIM_ART = `<svg viewBox="0 0 1920 1080" preserveAspectRatio="none" fill="none">
+  ${FIM_COLS.map((c, i) => { const d = 200 + i * 92; return `<path d="M-120 ${1080 - d - 120}L${d + 120} 1200" stroke="${c}" stroke-width="54"/>`; }).join('')}
+  ${FIM_COLS.map((c, i) => { const d = 200 + (4 - i) * 92; return `<path d="M${1920 - d - 120} -120L2040 ${d + 120}" stroke="${c}" stroke-width="54"/>`; }).join('')}</svg>`;
 const LINE_WAVES = (color, op) => `<svg viewBox="0 0 900 1160" preserveAspectRatio="xMidYMid slice" fill="none" stroke="${color}" stroke-opacity="${op}" stroke-linecap="round">
   <path d="M120 -40C220 260 640 420 860 1200" stroke-width="70"/>
   <path d="M330 -40C400 200 900 360 980 900" stroke-width="44"/>
@@ -558,7 +588,7 @@ function slideHTML(s, n, total) {
       return wrap('sl-secao', style, inner);
     }
     case 'encerramento':
-      inner = `<div class="wv">${LINE_WAVES('#ffffff', .05)}</div><div class="ev"><img class="lg" src="${LOGO_BRANCA}" alt="Miashop">
+      inner = `<div class="wv">${FIM_ART}</div><div class="ev"><img class="lg" src="${LOGO_BRANCA}" alt="Miashop">
         <h1>${fmt(s.titulo)}</h1>${s.subtitulo ? `<p>${fmt(s.subtitulo)}</p>` : ''}<div class="gb"></div></div><div class="foot"></div>`;
       return wrap('sl-encerramento', style, inner);
     case 'agenda': {
@@ -1034,6 +1064,7 @@ function renderApp() {
     <header class="hdr"><div class="in"><img class="lg" src="${LOGO_PRETA}" alt="Miashop">
       <nav class="tabs">${tabs.map(t => `<button class="tab ${S.view === t[0] ? 'on' : ''}" data-v="${t[0]}">${ic(t[2])}${t[1]}</button>`).join('')}</nav>
       <div class="sp"></div>
+      <button class="sbtn" id="bBusca" title="Buscar palavra nos slides (Ctrl+K)">${ic('search')}<span>Buscar nos slides</span><kbd>Ctrl K</kbd></button>
       <div class="who"><div class="av">${esc((S.sess.nome || S.sess.login || '?')[0].toUpperCase())}</div>
         <div class="nm">${esc(S.sess.nome)}<small>${m ? 'Master · edição' : 'Visualização'}</small></div>
         <button class="btn sm" id="bSenha" title="Alterar senha">${ic('lock')}</button>
@@ -1047,6 +1078,7 @@ function renderApp() {
   });
   $('#bSair').onclick = () => logout();
   $('#bSenha').onclick = changePassword;
+  $('#bBusca').onclick = () => openSearch();
   if (S.view === 'editor' && m) renderEditor();
   else if (S.view === 'usuarios' && m) renderUsers();
   else { S.view = 'home'; renderHome(); }
@@ -1087,16 +1119,100 @@ function renderHome() {
   $$('.th', v).forEach(t => t.onclick = () => openPresent(sl, +t.dataset.i));
 }
 
+/* ---------- BUSCA ---------- */
+const norm = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const plain = t => String(t || '').replace(/\*\*/g, '');
+const CAMPOS = [['secao', 'Seção'], ['titulo', 'Título'], ['subtitulo', 'Subtítulo'], ['destaque', 'Destaque'], ['destaqueLegenda', 'Legenda']];
+function searchList() {
+  if (P.el) return { list: P.list, where: 'pres' };
+  if (S.view === 'editor' && S.draft) return { list: S.draft, where: 'editor' };
+  return { list: activeSlides(), where: 'home' };
+}
+function snippet(text, q) {
+  const t = plain(text), n = norm(t), i = n.indexOf(q);
+  if (i < 0) return null;
+  const a = Math.max(0, i - 50), b = Math.min(t.length, i + q.length + 70);
+  return (a > 0 ? '…' : '') + esc(t.slice(a, i)) + '<mark>' + esc(t.slice(i, i + q.length)) + '</mark>' + esc(t.slice(i + q.length, b)) + (b < t.length ? '…' : '');
+}
+function searchSlides(list, qRaw) {
+  const q = norm(qRaw).trim(); if (q.length < 2) return [];
+  const out = [];
+  list.forEach((s, idx) => {
+    const hits = [];
+    CAMPOS.forEach(([k, lbl]) => { const sn = snippet(s[k], q); if (sn) hits.push([lbl, sn]); });
+    (s.itens || []).forEach(it => { const sn = snippet(it.t, q); if (sn) hits.push(['', sn]); });
+    const nn = snippet(s.notas, q); if (nn) hits.push(['Notas', nn]);
+    if (hits.length) out.push({ idx, s, hits, score: (norm(plain(s.titulo)).includes(q) ? 100 : 0) + hits.length });
+  });
+  return out;
+}
+function openSearch(initial) {
+  if (document.querySelector('.sov')) return;
+  const ov = document.createElement('div'); ov.className = 'sov';
+  ov.innerHTML = `<div class="sbox"><div class="sin">${ic('search')}<input placeholder="Digite uma palavra (ex.: troca, uniforme, CNPJ)" autocomplete="off"><button class="x" title="Fechar (Esc)">${ic('_x')}</button></div>
+    <div class="sres"><div class="sempty">Digite pelo menos 2 letras. A busca ignora acentos e maiúsculas.</div></div>
+    <div class="sfoot"><span>↑ ↓ navegar</span><span>Enter abrir</span><span>Esc fechar</span></div></div>`;
+  document.body.appendChild(ov);
+  const inp = $('input', ov), box = $('.sres', ov);
+  let res = [], sel = 0;
+  const close = () => ov.remove();
+  const pick = r => {
+    const ctx = searchList(), q = inp.value.trim(); close();
+    if (ctx.where === 'pres') { P.i = r.idx; P.hl = q; showP(0); wake(); }
+    else if (ctx.where === 'editor') { S.sel = r.idx; edRefresh(true); setTimeout(() => { const p = $('#edPrev'); if (p) highlightIn(p, q); }, 50); }
+    else { P.hlNext = q; openPresent(ctx.list, r.idx); }
+  };
+  const draw = () => {
+    const ctx = searchList();
+    res = searchSlides(ctx.list, inp.value); sel = 0;
+    if (norm(inp.value).trim().length < 2) { box.innerHTML = '<div class="sempty">Digite pelo menos 2 letras. A busca ignora acentos e maiúsculas.</div>'; return; }
+    if (!res.length) { box.innerHTML = `<div class="sempty">Nenhum slide com “${esc(inp.value)}”.</div>`; return; }
+    box.innerHTML = `<div class="hint" style="padding:6px 12px 8px">${res.length} slide(s) encontrado(s)</div>` + res.map((r, i) => `<div class="sr ${i === 0 ? 'on' : ''}" data-r="${i}">
+      <div class="no" style="background:${pal(r.s.cor).ac};color:${pal(r.s.cor).on}">${r.idx + 1}</div>
+      <div><div class="tt">${esc(plain(r.s.titulo) || '(sem título)')}${r.s.ativo === false ? ' <span class="hint">(oculto)</span>' : ''}</div>
+        <div class="sn">${r.hits.slice(0, 3).map(h => `<span class="w">${h[0] ? `<span class="fl">${h[0]}</span>` : ''}${h[1]}</span>`).join('')}${r.hits.length > 3 ? `<span class="w">+${r.hits.length - 3} ocorrência(s)</span>` : ''}</div></div></div>`).join('');
+    $$('.sr', box).forEach(el => el.onclick = () => pick(res[+el.dataset.r]));
+  };
+  const mark = () => { $$('.sr', box).forEach((el, i) => el.classList.toggle('on', i === sel)); const o = $('.sr.on', box); if (o) o.scrollIntoView({ block: 'nearest' }); };
+  inp.addEventListener('input', draw);
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); if (res.length) { sel = (sel + 1) % res.length; mark(); } }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); if (res.length) { sel = (sel - 1 + res.length) % res.length; mark(); } }
+    else if (e.key === 'Enter') { e.preventDefault(); if (res[sel]) pick(res[sel]); }
+    else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); }
+  });
+  ov.addEventListener('click', e => { if (e.target === ov || e.target.closest('.x')) close(); });
+  if (initial) inp.value = initial;
+  inp.focus(); setTimeout(() => inp.focus(), 30); if (initial) draw();
+}
+/* marca a palavra encontrada dentro do slide */
+function highlightIn(root, qRaw) {
+  const q = norm(qRaw).trim(); if (q.length < 2) return;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes = []; let n; while ((n = walker.nextNode())) nodes.push(n);
+  nodes.forEach(node => {
+    const t = node.nodeValue; let ns = '', map = [];
+    for (let i = 0; i < t.length; i++) { const c = norm(t[i]); for (let j = 0; j < c.length; j++) { ns += c[j]; map.push(i); } }
+    const parts = []; let from = 0, pos;
+    while ((pos = ns.indexOf(q, from)) >= 0) { parts.push([map[pos], map[pos + q.length - 1] + 1]); from = pos + q.length; }
+    if (!parts.length) return;
+    const frag = document.createDocumentFragment(); let last = 0;
+    parts.forEach(([a, b]) => { frag.appendChild(document.createTextNode(t.slice(last, a))); const m = document.createElement('mark'); m.textContent = t.slice(a, b); frag.appendChild(m); last = b; });
+    frag.appendChild(document.createTextNode(t.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  });
+}
+
 /* ---------- MODO APRESENTAÇÃO ---------- */
 const P = { list: [], i: 0, el: null, idleT: null, notes: false };
 function openPresent(list, start) {
   closePresent();
-  P.list = list; P.i = Math.max(0, Math.min(start || 0, list.length - 1)); P.notes = false;
+  P.list = list; P.i = Math.max(0, Math.min(start || 0, list.length - 1)); P.notes = false; P.hl = P.hlNext || ''; P.hlNext = '';
   const el = document.createElement('div'); el.id = 'pres'; P.el = el;
   el.innerHTML = `<div class="prog"></div><div class="stage"><div class="stg"></div></div>
     <button class="side l" data-a="prev">${ic('_l')}</button><button class="side r" data-a="next">${ic('_r')}</button>
     <div class="ctl"><button data-a="prev" title="Anterior (←)">${ic('_l')}</button><div class="cnt"></div><button data-a="next" title="Próximo (→)">${ic('_r')}</button>
-      <button data-a="grid" title="Visão geral (G)">${ic('grid')}</button><button data-a="notes" title="Notas (N)">${ic('file')}</button>
+      <button data-a="grid" title="Visão geral (G)">${ic('grid')}</button><button data-a="notes" title="Notas (N)">${ic('file')}</button><button data-a="search" title="Buscar (B)">${ic('search')}</button>
       <button data-a="fs" title="Tela cheia (F)">${ic('_max')}</button><button data-a="close" title="Sair (Esc)">${ic('_x')}</button></div>
     <div class="notes hidden"></div><div class="ovw hidden"></div>`;
   document.body.appendChild(el);
@@ -1105,6 +1221,7 @@ function openPresent(list, start) {
     if (b) { const a = b.dataset.a;
       if (a === 'prev') go(-1); else if (a === 'next') go(1); else if (a === 'close') closePresent();
       else if (a === 'fs') toggleFs(); else if (a === 'grid') toggleOverview(); else if (a === 'notes') { P.notes = !P.notes; showP(0); }
+      else if (a === 'search') openSearch();
       return; }
     const t = e.target.closest('.ovw .th'); if (t) { P.i = +t.dataset.i; toggleOverview(false); showP(0); }
   });
@@ -1124,7 +1241,7 @@ function closePresent() {
   if (S.view === 'home' && $('#view')) renderHome();
 }
 function presKey(e) {
-  if (!P.el) return;
+  if (!P.el || document.querySelector('.sov') || /INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '')) return;
   const k = e.key;
   if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(k)) { e.preventDefault(); go(1); }
   else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(k)) { e.preventDefault(); go(-1); }
@@ -1132,14 +1249,16 @@ function presKey(e) {
   else if (k === 'Escape') { if (!$('.ovw', P.el).classList.contains('hidden')) toggleOverview(false); else if (!document.fullscreenElement) closePresent(); }
   else if (k === 'f' || k === 'F') toggleFs(); else if (k === 'g' || k === 'G') toggleOverview();
   else if (k === 'n' || k === 'N') { P.notes = !P.notes; showP(0); }
+  else if (k === 'b' || k === 'B' || k === '/') { e.preventDefault(); openSearch(); }
   wake();
 }
-function go(d) { const n = P.i + d; if (n < 0 || n >= P.list.length) return; P.i = n; showP(d); }
+function go(d) { const n = P.i + d; if (n < 0 || n >= P.list.length) return; P.i = n; P.hl = ''; showP(d); }
 function showP(dir) {
   const st = $('.stg', P.el), s = P.list[P.i];
   st.classList.toggle('back', dir < 0);
   st.innerHTML = slideHTML(s, P.i + 1, P.list.length);
   layoutP(); fitIn(st);
+  if (P.hl) highlightIn(st, P.hl);
   $('.cnt', P.el).textContent = `${P.i + 1} / ${P.list.length}`;
   $('.prog', P.el).style.width = ((P.i + 1) / P.list.length * 100) + '%';
   const nt = $('.notes', P.el); nt.classList.toggle('hidden', !P.notes);
@@ -1487,6 +1606,7 @@ async function loadUsers() {
 
 /* ---------- atalhos globais ---------- */
 document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k' && S.sess && $('#app')) { e.preventDefault(); openSearch(); return; }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && S.view === 'editor' && !P.el) { e.preventDefault(); if (S.dirty) saveDeck(); }
 });
 window.addEventListener('beforeunload', e => { if (S.dirty) { e.preventDefault(); e.returnValue = ''; } });
