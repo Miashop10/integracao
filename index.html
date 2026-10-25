@@ -139,6 +139,16 @@ main.view{flex:1;padding:26px 20px 60px;max-width:1500px;width:100%;margin:0 aut
 .itm .cnt{font-size:11px;color:var(--muted);text-align:right;margin-top:3px}
 .itm .cnt.long{color:#B5651D;font-weight:800}
 .imgbox{border:2px dashed var(--line);border-radius:12px;padding:12px;text-align:center}
+.ibx{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.ibx img,.ibx .ph0{width:120px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--line);background:#fff;flex:none}
+.ibx .ph0{display:grid;place-items:center;font-size:12px;color:var(--muted)}
+.ibx .bt{display:flex;gap:6px;flex-wrap:wrap}
+.dsw{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.dsw button{border:0;background:transparent;border-radius:8px;padding:6px 12px;font-weight:800;font-size:13px;cursor:pointer;color:var(--muted)}
+.dsw button.on{background:var(--ink);color:#fff}
+.sr .dk{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:2px 8px;background:var(--soft);color:var(--muted);margin-left:6px;vertical-align:middle}
+.prog2{height:10px;border-radius:99px;background:var(--soft);overflow:hidden;margin:14px 0 8px}
+.prog2 i{display:block;height:100%;background:var(--grad);width:0;transition:width .3s}
 .imgbox img{max-width:100%;max-height:150px;border-radius:8px;display:block;margin:0 auto 10px}
 .chk{display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer}
 @media(max-width:1280px){.ed{grid-template-columns:230px minmax(0,1fr)}.ed .form{grid-column:1/-1}.ed .prev{position:static}}
@@ -384,6 +394,22 @@ mark{background:#FFE15A;color:inherit;border-radius:3px;padding:0 2px}
 .sl .tl .rows .bub{width:calc(60px*var(--k));height:calc(60px*var(--k));border-radius:calc(18px*var(--k))}
 .sl .tl .rows .k-dica .ct{color:var(--tx2)}
 
+/* certo x errado (fotos) */
+.sl .cp{flex:1;min-height:0;display:grid;grid-template-columns:repeat(var(--n),minmax(0,780px));justify-content:center;gap:calc(56px*var(--k))}
+.sl .cp.n1{grid-template-columns:minmax(0,1240px)}
+.sl .cp.n3{grid-template-columns:repeat(3,minmax(0,1fr));gap:40px}
+.sl .pn{background:#fff;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 26px 50px -34px rgba(0,0,0,.45);border:1px solid #ECE9E2;min-height:0}
+.sl .pn .ph{position:relative;flex:1;min-height:0;background:#EEECE6}
+.sl .pn .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sl .pn .ph .nf{position:absolute;inset:0;display:grid;place-items:center;color:#A4A19A;font-size:28px;font-weight:700}
+.sl .tg{position:absolute;top:24px;left:24px;display:inline-flex;align-items:center;gap:10px;padding:10px 22px 10px 14px;border-radius:99px;font-family:Jost,Futura,'Century Gothic','Trebuchet MS',sans-serif;font-weight:700;font-size:25px;letter-spacing:.12em;text-transform:uppercase;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.sl .tg svg{width:28px;height:28px;stroke-width:3.2}
+.sl .tg.ok{background:#1E9E5A}.sl .tg.no{background:#D93636}
+.sl .pn .cap{flex:none;padding:calc(24px*var(--k)) calc(34px*var(--k)) calc(28px*var(--k));min-height:calc(148px*var(--k));display:flex;align-items:center;font-size:calc(31px*var(--k));line-height:1.3;font-weight:700;border-top:8px solid #D8D4CC}
+.sl .cp.n3 .pn .cap{font-size:calc(27px*var(--k))}
+.sl .pn.k-certo .cap{border-top-color:#1E9E5A}.sl .pn.k-errado .cap{border-top-color:#D93636}
+.sl .pn.k-certo strong{color:#167A45}.sl .pn.k-errado strong{color:#C02A2A}
+
 /* encerramento */
 .sl-encerramento{background:linear-gradient(135deg,#F6A04D 0%,#F18634 45%,#EC6B3B 100%);color:#fff}
 .sl-encerramento .ev{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 200px;z-index:2}
@@ -540,6 +566,7 @@ const LAYOUTS = {
   numero:       { n: 'Número em destaque', d: 'Valor/prazo grande + lista', img: false, itens: true, dz: ['Número / valor em destaque', 'Ex.: 2 dias, R$ 500'], dl: 'Legenda do número' },
   citacao:      { n: 'Frase em destaque', d: 'Frase/saudação + pontos', img: true, itens: true, dz: ['Frase em destaque', 'Ex.: Seja bem-vindo!...'], dl: 'Legenda da frase' },
   tela:         { n: 'Tela do sistema / documento', d: 'Print ou documento com pontos numerados', img: true, itens: true, dz: null },
+  compara:      { n: 'Certo × Errado (fotos)', d: '1 a 3 fotos com legenda e marcação', img: false, itens: true, dz: null },
   passos:       { n: 'Passo a passo', d: 'Etapas numeradas (até 5)', img: false, itens: true, dz: null },
   proibidos:    { n: 'Proibições', d: 'Lista do que não pode', img: false, itens: true, dz: null },
   checklist:    { n: 'Checklist', d: 'Itens de verificação', img: false, itens: true, dz: null },
@@ -562,12 +589,12 @@ function slideHTML(s, n, total) {
   const dark = cls === 'img-bg';
   const pg = `<div class="pg">${String(n).padStart(2, '0')} / ${String(total).padStart(2, '0')}</div>`;
   const top = `<div class="top">${s.secao ? `<span class="pill">${s.icone ? ic(s.icone) : ''}${esc(s.secao)}</span>` : '<span></span>'}<img class="tlogo" src="${dark ? LOGO_BRANCA : LOGO_PRETA}" alt="Miashop"></div>`;
-  const foot = `<div class="foot"></div><div class="mk">Integração Miashop</div>${pg}`;
+  const foot = `<div class="foot"></div><div class="mk">${esc(DECKS[S.dk] ? DECKS[S.dk].mk : 'Miashop')}</div>${pg}`;
   const pic = hasImg && cls !== 'img-bg' ? `<div class="pic"><img src="${esc(s.imgUrl)}" alt="" referrerpolicy="no-referrer"></div>` : '';
   const bg = hasImg && cls === 'img-bg' ? `<img class="bgimg" src="${esc(s.imgUrl)}" alt="" referrerpolicy="no-referrer"><div class="bgov"></div>` : '';
   const narrow = cls === 'img-r' || cls === 'img-l';
   const head = `<h2 class="ttl">${fmt(s.titulo)}</h2>${s.subtitulo ? `<p class="sub">${fmt(s.subtitulo)}</p>` : ''}`;
-  const itens = (s.itens || []).filter(i => String(i.t || '').trim());
+  const itens = (s.itens || []).filter(i => String(i.t || '').trim() || (L === 'compara' && i.img));
   let inner = '';
 
   switch (L) {
@@ -618,6 +645,15 @@ function slideHTML(s, n, total) {
       const shot = s.imgUrl ? `<div class="wim"><img src="${esc(s.imgUrl)}" alt="" referrerpolicy="no-referrer"></div>` : '<div class="ph">Envie o print da tela<br>ou a foto do documento</div>';
       inner = `<div class="tl"><div class="scr"><div class="win"><div class="wb"><i></i><i></i><i></i></div>${shot}</div></div>${lista}</div>`;
       return wrap(`sl-tela`, style, `${top}<div class="main">${head}<div class="body">${inner}</div></div>${foot}`);
+    }
+    case 'compara': {
+      const n = Math.max(1, Math.min(itens.length, 3));
+      inner = `<div class="cp n${n}" style="--n:${n}">${itens.slice(0, 3).map(it => {
+        const k = it.k === 'certo' || it.k === 'errado' ? it.k : 'normal';
+        const tag = k === 'certo' ? `<span class="tg ok">${ic('check')}Certo</span>` : k === 'errado' ? `<span class="tg no">${ic('_x')}Errado</span>` : '';
+        return `<div class="pn k-${k}"><div class="ph">${it.img ? `<img src="${esc(it.img)}" alt="" referrerpolicy="no-referrer">` : '<div class="nf">Sem foto</div>'}${tag}</div><div class="cap"><div>${fmt(it.t)}</div></div></div>`;
+      }).join('')}</div>`;
+      break;
     }
     case 'passos':
       inner = `<div class="ps" style="--cols:${Math.max(1, itens.length)}">${itens.map((it, i) => `<div class="p"><div class="pn">${i + 1}</div>
@@ -870,7 +906,7 @@ async function aplicarMigracoes() {
     } catch (e) { /* tenta de novo no próximo acesso */ }
   }
   if (!mudou) return;
-  const s = await api('slides.save', { slides: S.deck.slides, baseVersion: S.deck.versao });
+  const s = await api('slides.save', { deck: 'integracao', slides: S.deck.slides, baseVersion: S.deck.versao });
   if (s.ok) { S.deck.versao = s.versao; S.deck.por = s.atualizadoPor; S.deck.em = s.atualizadoEm; toast(mudou + ' slide(s) atualizados com as imagens do sistema.', 'ok'); }
 }
 
@@ -917,7 +953,9 @@ async function demoApi(b) {
   if (b.action !== 'login' && !me) return { ok: false, auth: true, erro: 'Sessão expirada.' };
   const master = me && me.perfil === 'MASTER';
   const deny = { ok: false, erro: 'Apenas o MASTER pode fazer isso.' };
-  const deck = lsGet(LS.dDeck, { slides: [], versao: '' });
+  const dk = b.deck === 'exposicao' ? 'exposicao' : 'integracao';
+  const dKey = dk === 'integracao' ? LS.dDeck : LS.dDeck + '.' + dk;
+  const deck = lsGet(dKey, { slides: [], versao: '' });
   switch (b.action) {
     case 'login': {
       const u = users.find(x => x.login === String(b.login || '').trim().toUpperCase());
@@ -925,12 +963,12 @@ async function demoApi(b) {
       u.ultimoAcesso = agora(); lsSet(LS.dUsers, users);
       return { ok: true, token: 'demo-' + u.login, usuario: { login: u.login, nome: u.nome, perfil: u.perfil } };
     }
-    case 'slides.get': return { ok: true, slides: master ? deck.slides : deck.slides.filter(s => s.ativo), versao: deck.versao, atualizadoPor: deck.por, atualizadoEm: deck.em };
+    case 'slides.get': return { ok: true, deck: dk, slides: master ? deck.slides : deck.slides.filter(s => s.ativo), versao: deck.versao, atualizadoPor: deck.por, atualizadoEm: deck.em };
     case 'slides.save': {
       if (!master) return deny;
       if (!b.force && deck.versao && b.baseVersion !== deck.versao) return { ok: false, conflito: true, versao: deck.versao, atualizadoPor: deck.por, atualizadoEm: deck.em };
       const nv = { slides: b.slides, versao: String(Date.now()), por: me.login, em: agora() };
-      try { localStorage.setItem(LS.dDeck, JSON.stringify(nv)); } catch (e) { return { ok: false, erro: 'Espaço do navegador cheio (modo demo). Use imagens menores ou configure o Apps Script.' }; }
+      try { localStorage.setItem(dKey, JSON.stringify(nv)); } catch (e) { return { ok: false, erro: 'Espaço do navegador cheio (modo demo). Use imagens menores ou configure o Apps Script.' }; }
       return { ok: true, versao: nv.versao, atualizadoPor: nv.por, atualizadoEm: nv.em };
     }
     case 'foto.upload': return master ? { ok: true, id: 'demo-' + uid(), url: 'data:' + b.mime + ';base64,' + b.base64 } : deny;
@@ -972,7 +1010,18 @@ function agora() { const d = new Date(); const p = n => String(n).padStart(2, '0
 /* =========================================================
    ESTADO / UI GERAL
    ========================================================= */
-const S = { sess: lsGet(LS.sess, null), deck: null, draft: null, dirty: false, view: 'home', sel: 0, users: [] };
+const DECKS = {
+  integracao: { n: 'Integração', v: 'home', mk: 'Integração Miashop', rot: 'Integração de colaboradores' },
+  exposicao:  { n: 'Manual de exposição', v: 'expo', mk: 'Manual de Exposição Miashop', rot: 'Manual de exposição' }
+};
+const S = { sess: lsGet(LS.sess, null), view: 'home', users: [], dk: 'integracao', store: {} };
+/* S.deck / S.draft / S.dirty / S.sel apontam sempre para a apresentação atual (S.dk) */
+['deck', 'draft', 'dirty', 'sel'].forEach(p => Object.defineProperty(S, p, {
+  get() { const st = S.store[S.dk]; return st ? st[p] : (p === 'dirty' ? false : p === 'sel' ? 0 : null); },
+  set(v) { (S.store[S.dk] = S.store[S.dk] || { deck: null, draft: null, dirty: false, sel: 0 })[p] = v; }
+}));
+const clone = o => JSON.parse(JSON.stringify(o));
+const anyDirty = () => Object.values(S.store).some(st => st && st.dirty);
 const $ = (q, r) => (r || document).querySelector(q);
 const $$ = (q, r) => [...(r || document).querySelectorAll(q)];
 const isMaster = () => S.sess && S.sess.perfil === 'MASTER';
@@ -1028,9 +1077,9 @@ function renderLogin(msg) {
   });
 }
 async function logout(expired) {
-  if (!expired && S.dirty && !(await ask('Sair sem salvar?', 'Há alterações não salvas no editor.', 'Sair mesmo assim', true))) return;
+  if (!expired && anyDirty() && !(await ask('Sair sem salvar?', 'Há alterações não salvas no editor.', 'Sair mesmo assim', true))) return;
   if (!expired && S.sess) { try { await api('logout'); } catch (e) {} }
-  S.sess = null; S.deck = null; S.draft = null; S.dirty = false; lsDel(LS.sess);
+  S.sess = null; S.store = {}; S.dk = 'integracao'; lsDel(LS.sess);
   closePresent(); renderLogin(expired ? 'Sua sessão expirou. Entre novamente.' : '');
 }
 
@@ -1038,28 +1087,91 @@ async function logout(expired) {
 async function boot() {
   if (!S.sess) return renderLogin();
   $('#root').innerHTML = `<div class="loading"><div><div class="spin"></div><p>Carregando apresentação...</p></div></div>`;
-  try { await loadDeck(); } catch (e) { if (!S.sess) return; $('#root').innerHTML = `<div class="loading"><div><p>${esc(e.message)}</p><button class="btn pri" onclick="boot()">Tentar de novo</button></div></div>`; return; }
+  S.store = {}; S.dk = 'integracao';
+  try { await ensureDeck('integracao'); } catch (e) { if (!S.sess) return; $('#root').innerHTML = `<div class="loading"><div><p>${esc(e.message)}</p><button class="btn pri" onclick="boot()">Tentar de novo</button></div></div>`; return; }
   renderApp();
+  prefetchDeck('exposicao');
 }
-async function loadDeck() {
-  const r = await api('slides.get');
+async function fetchDeck(k) {
+  const r = await api('slides.get', { deck: k });
   if (!r.ok) throw new Error(r.erro || 'Erro ao carregar.');
-  S.deck = { slides: r.slides || [], versao: r.versao, por: r.atualizadoPor, em: r.atualizadoEm };
-  if (!S.deck.slides.length) {
-    S.deck.slides = seedDeck();
-    if (isMaster()) {
-      const s = await api('slides.save', { slides: S.deck.slides, baseVersion: S.deck.versao });
-      if (s.ok) { S.deck.versao = s.versao; S.deck.por = s.atualizadoPor; S.deck.em = s.atualizadoEm; toast('Conteúdo do manual carregado na planilha.', 'ok'); }
+  if (k !== 'integracao' && r.deck !== k) throw new Error('O Apps Script está desatualizado para o Manual de exposição: cole o novo Code.gs no Apps Script e crie uma NOVA VERSÃO da implantação.');
+  return { slides: r.slides || [], versao: r.versao, por: r.atualizadoPor, em: r.atualizadoEm };
+}
+/* carrega (se preciso) e prepara a apresentação k; usa sempre a apresentação atual S.dk = k */
+async function ensureDeck(k) {
+  let st = S.store[k];
+  if (!st || !st.deck) st = S.store[k] = { deck: await fetchDeck(k), draft: null, dirty: false, sel: 0 };
+  if (!st.deck.slides.length && !st.seedTried) {
+    st.seedTried = true;
+    if (k === 'integracao') {
+      st.deck.slides = seedDeck();
+      if (isMaster()) {
+        const s = await api('slides.save', { deck: k, slides: st.deck.slides, baseVersion: st.deck.versao });
+        if (s.ok) { st.deck.versao = s.versao; st.deck.por = s.atualizadoPor; st.deck.em = s.atualizadoEm; toast('Conteúdo do manual carregado na planilha.', 'ok'); }
+      }
+    } else if (k === 'exposicao' && isMaster()) {
+      await seedExposicao(st);
     }
   }
-  try { await aplicarMigracoes(); } catch (e) {}
-  S.draft = JSON.parse(JSON.stringify(S.deck.slides)); S.dirty = false;
-  S.sel = Math.min(S.sel, Math.max(0, S.draft.length - 1));
+  if (k === 'integracao' && !st.migrated) { st.migrated = true; const prev = S.dk; S.dk = k; try { await aplicarMigracoes(); } catch (e) {} S.dk = prev; st.draft = null; }
+  if (!st.draft) { st.draft = clone(st.deck.slides); st.dirty = false; }
+  st.sel = Math.min(st.sel || 0, Math.max(0, st.draft.length - 1));
+  return st;
+}
+async function prefetchDeck(k) {
+  if (S.store[k] && S.store[k].deck) return;
+  try { const d = await fetchDeck(k); if (!S.store[k] || !S.store[k].deck) S.store[k] = { deck: d, draft: clone(d.slides), dirty: false, sel: 0 }; } catch (e) {}
+}
+async function useDeck(k) { S.dk = k; await ensureDeck(k); }
+
+/* primeira carga do Manual de exposição: lê exposicao-seed.json (mesma pasta do GitHub) e envia as fotos ao Drive */
+async function seedExposicao(st, soRetornar) {
+  let data;
+  try {
+    const r = await fetch('exposicao-seed.json', { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    data = await r.json();
+  } catch (e) {
+    await modal('Arquivo do manual não encontrado', `<p>Para carregar o Manual de exposição com as fotos, envie o arquivo <b>exposicao-seed.json</b> para o GitHub, na mesma pasta do index.html, e abra esta aba de novo.</p><p class="hint">${esc(e.message)}</p>`, [{ t: 'OK', v: true, c: 'pri' }]);
+    st.seedTried = false; return null;
+  }
+  const slides = data.slides || [];
+  const fotos = [];
+  slides.forEach(sl => (sl.itens || []).forEach(it => { if (it.imgData) fotos.push({ sl, it }); }));
+  const ov = document.createElement('div'); ov.className = 'ov';
+  ov.innerHTML = `<div class="md"><h3>Carregando o Manual de exposição</h3><p>Enviando as fotos das lojas para o Google Drive. Não feche esta página.</p>
+    <div class="prog2"><i></i></div><p class="hint" id="sdTxt">0 de ${fotos.length} fotos</p></div>`;
+  document.body.appendChild(ov);
+  let feitas = 0, falhas = 0;
+  const upOne = async f => {
+    for (let t = 0; t < 2; t++) {
+      try {
+        const r = await api('foto.upload', { base64: f.it.imgData.split(',')[1], mime: 'image/jpeg', slideId: f.sl.id });
+        if (r.ok) { f.it.img = r.url; f.it.imgId = r.id; break; }
+      } catch (e) { if (!S.sess) throw e; }
+    }
+    if (!f.it.img) falhas++;
+    delete f.it.imgData; feitas++;
+    $('.prog2 i', ov).style.width = (feitas / fotos.length * 100) + '%';
+    $('#sdTxt', ov).textContent = `${feitas} de ${fotos.length} fotos`;
+  };
+  try {
+    const fila = fotos.slice();
+    await Promise.all([0, 1, 2].map(async () => { while (fila.length) await upOne(fila.shift()); }));
+  } finally { ov.remove(); }
+  slides.forEach(sl => (sl.itens || []).forEach(it => { delete it.imgData; it.img = it.img || ''; it.imgId = it.imgId || ''; }));
+  if (soRetornar) return slides;
+  const s = await api('slides.save', { deck: 'exposicao', slides, baseVersion: st.deck.versao });
+  if (!s.ok) { toast('Erro ao salvar o manual: ' + (s.erro || 'conflito'), 'err'); return null; }
+  st.deck = { slides, versao: s.versao, por: s.atualizadoPor, em: s.atualizadoEm }; st.draft = null;
+  toast(`Manual de exposição carregado: ${slides.length} slides${falhas ? ` (${falhas} foto(s) não enviada(s))` : ''}.`, falhas ? 'err' : 'ok');
+  return slides;
 }
 
 function renderApp() {
   const m = isMaster();
-  const tabs = [['home', 'Apresentação', '_play']].concat(m ? [['editor', 'Editor de slides', '_edit'], ['usuarios', 'Usuários', 'users']] : []);
+  const tabs = [['home', 'Integração', '_play'], ['expo', 'Manual de exposição', 'store']].concat(m ? [['editor', 'Editor de slides', '_edit'], ['usuarios', 'Usuários', 'users']] : []);
   $('#root').innerHTML = `<div id="app">
     <header class="hdr"><div class="in"><img class="lg" src="${LOGO_PRETA}" alt="Miashop">
       <nav class="tabs">${tabs.map(t => `<button class="tab ${S.view === t[0] ? 'on' : ''}" data-v="${t[0]}">${ic(t[2])}${t[1]}</button>`).join('')}</nav>
@@ -1072,16 +1184,24 @@ function renderApp() {
     ${DEMO ? '<div class="demo">MODO DEMONSTRAÇÃO — dados salvos só neste navegador. Cole a URL do Apps Script em API_URL para usar a planilha.</div>' : ''}
     <main class="view" id="view"></main></div>`;
   $$('.tab').forEach(b => b.onclick = async () => {
-    if (S.view === 'editor' && b.dataset.v !== 'editor' && S.dirty && !(await ask('Alterações não salvas', 'Deseja sair do editor sem salvar?', 'Sair sem salvar', true))) return;
-    if (S.view === 'editor' && b.dataset.v !== 'editor' && S.dirty) { S.draft = JSON.parse(JSON.stringify(S.deck.slides)); S.dirty = false; }
+    if (S.view === 'editor' && b.dataset.v !== 'editor' && anyDirty() && !(await ask('Alterações não salvas', 'Deseja sair do editor sem salvar?', 'Sair sem salvar', true))) return;
+    if (S.view === 'editor' && b.dataset.v !== 'editor') Object.values(S.store).forEach(st => { if (st && st.dirty) { st.draft = clone(st.deck.slides); st.dirty = false; } });
     S.view = b.dataset.v; renderApp();
   });
   $('#bSair').onclick = () => logout();
   $('#bSenha').onclick = changePassword;
   $('#bBusca').onclick = () => openSearch();
-  if (S.view === 'editor' && m) renderEditor();
-  else if (S.view === 'usuarios' && m) renderUsers();
-  else { S.view = 'home'; renderHome(); }
+  renderView();
+}
+async function renderView() {
+  const m = isMaster(), v = $('#view');
+  if (S.view === 'usuarios' && m) return renderUsers();
+  if (!['home', 'expo', 'editor'].includes(S.view) || (S.view === 'editor' && !m)) S.view = 'home';
+  const k = S.view === 'home' ? 'integracao' : S.view === 'expo' ? 'exposicao' : S.dk;
+  if (!(S.store[k] && S.store[k].draft && (S.store[k].deck.slides.length || S.store[k].seedTried || !m))) v.innerHTML = '<div class="loading"><div><div class="spin"></div><p>Carregando...</p></div></div>';
+  try { await useDeck(k); } catch (e) { v.innerHTML = `<div class="loading"><div><p>${esc(e.message)}</p><button class="btn pri" id="bRetry">Tentar de novo</button></div></div>`; $('#bRetry').onclick = () => { delete S.store[k]; renderView(); }; return; }
+  if (!$('#view')) return;
+  if (S.view === 'editor') renderEditor(); else renderHome();
 }
 
 async function changePassword() {
@@ -1100,11 +1220,15 @@ async function changePassword() {
 function activeSlides() { return (S.deck ? S.deck.slides : []).filter(s => s.ativo !== false); }
 function renderHome() {
   const sl = activeSlides();
-  const pos = lsGet(LS.pos + S.sess.login, 0);
+  const pos = lsGet(LS.pos + S.dk + '.' + S.sess.login, 0);
   const v = $('#view');
-  if (!sl.length) { v.innerHTML = '<div class="loading"><p>Nenhum slide disponível ainda.</p></div>'; return; }
+  if (!sl.length) {
+    v.innerHTML = `<div class="loading"><div><p>Nenhum slide disponível ainda.</p>${isMaster() && S.dk === 'exposicao' ? '<button class="btn pri" id="bSeedX">Carregar o Manual de exposição</button>' : ''}</div></div>`;
+    if ($('#bSeedX')) $('#bSeedX').onclick = async () => { const st = S.store.exposicao; st.seedTried = true; await seedExposicao(st); st.draft = null; renderView(); };
+    return;
+  }
   v.innerHTML = `<section class="hero"><div id="hPrev">${scaler(slideHTML(sl[0], 1, sl.length))}</div>
-      <div><span class="hint" style="font-weight:800;letter-spacing:.08em;text-transform:uppercase">Integração de colaboradores</span>
+      <div><span class="hint" style="font-weight:800;letter-spacing:.08em;text-transform:uppercase">${esc(DECKS[S.dk].rot)}</span>
         <h2 style="margin-top:8px">${esc(sl[0].titulo || 'Manual de Integração')}</h2>
         <p>${sl.length} slides · use as setas do teclado, toque ou os botões para avançar. Funciona em computador, TV e projetor.</p>
         <div class="acts"><button class="btn rosa" id="bStart">${ic('_play')}Iniciar apresentação</button>
@@ -1124,9 +1248,9 @@ const norm = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '
 const plain = t => String(t || '').replace(/\*\*/g, '');
 const CAMPOS = [['secao', 'Seção'], ['titulo', 'Título'], ['subtitulo', 'Subtítulo'], ['destaque', 'Destaque'], ['destaqueLegenda', 'Legenda']];
 function searchList() {
-  if (P.el) return { list: P.list, where: 'pres' };
-  if (S.view === 'editor' && S.draft) return { list: S.draft, where: 'editor' };
-  return { list: activeSlides(), where: 'home' };
+  if (P.el) return [{ dk: P.dk, list: P.list, where: 'pres' }];
+  if (S.view === 'editor' && S.draft) return [{ dk: S.dk, list: S.draft, where: 'editor' }];
+  return Object.keys(DECKS).sort((a, b) => (b === S.dk) - (a === S.dk)).filter(k => S.store[k] && S.store[k].deck).map(k => ({ dk: k, list: S.store[k].deck.slides.filter(s => s.ativo !== false), where: 'home' }));
 }
 function snippet(text, q) {
   const t = plain(text), n = norm(t), i = n.indexOf(q);
@@ -1156,20 +1280,24 @@ function openSearch(initial) {
   const inp = $('input', ov), box = $('.sres', ov);
   let res = [], sel = 0;
   const close = () => ov.remove();
-  const pick = r => {
-    const ctx = searchList(), q = inp.value.trim(); close();
+  const pick = async r => {
+    const ctx = r.ctx, q = inp.value.trim(); close();
     if (ctx.where === 'pres') { P.i = r.idx; P.hl = q; showP(0); wake(); }
     else if (ctx.where === 'editor') { S.sel = r.idx; edRefresh(true); setTimeout(() => { const p = $('#edPrev'); if (p) highlightIn(p, q); }, 50); }
-    else { P.hlNext = q; openPresent(ctx.list, r.idx); }
+    else {
+      if (S.view !== DECKS[ctx.dk].v) { S.view = DECKS[ctx.dk].v; renderApp(); }
+      await useDeck(ctx.dk);
+      P.hlNext = q; openPresent(ctx.list, r.idx);
+    }
   };
   const draw = () => {
-    const ctx = searchList();
-    res = searchSlides(ctx.list, inp.value); sel = 0;
+    const ctxs = searchList(), multi = ctxs.length > 1;
+    res = []; ctxs.forEach(ctx => searchSlides(ctx.list, inp.value).forEach(r => { r.ctx = ctx; r.multi = multi; res.push(r); })); sel = 0;
     if (norm(inp.value).trim().length < 2) { box.innerHTML = '<div class="sempty">Digite pelo menos 2 letras. A busca ignora acentos e maiúsculas.</div>'; return; }
     if (!res.length) { box.innerHTML = `<div class="sempty">Nenhum slide com “${esc(inp.value)}”.</div>`; return; }
     box.innerHTML = `<div class="hint" style="padding:6px 12px 8px">${res.length} slide(s) encontrado(s)</div>` + res.map((r, i) => `<div class="sr ${i === 0 ? 'on' : ''}" data-r="${i}">
       <div class="no" style="background:${pal(r.s.cor).ac};color:${pal(r.s.cor).on}">${r.idx + 1}</div>
-      <div><div class="tt">${esc(plain(r.s.titulo) || '(sem título)')}${r.s.ativo === false ? ' <span class="hint">(oculto)</span>' : ''}</div>
+      <div><div class="tt">${esc(plain(r.s.titulo) || '(sem título)')}${r.multi ? `<span class="dk">${esc(DECKS[r.ctx.dk].n)}</span>` : ''}${r.s.ativo === false ? ' <span class="hint">(oculto)</span>' : ''}</div>
         <div class="sn">${r.hits.slice(0, 3).map(h => `<span class="w">${h[0] ? `<span class="fl">${h[0]}</span>` : ''}${h[1]}</span>`).join('')}${r.hits.length > 3 ? `<span class="w">+${r.hits.length - 3} ocorrência(s)</span>` : ''}</div></div></div>`).join('');
     $$('.sr', box).forEach(el => el.onclick = () => pick(res[+el.dataset.r]));
   };
@@ -1207,7 +1335,7 @@ function highlightIn(root, qRaw) {
 const P = { list: [], i: 0, el: null, idleT: null, notes: false };
 function openPresent(list, start) {
   closePresent();
-  P.list = list; P.i = Math.max(0, Math.min(start || 0, list.length - 1)); P.notes = false; P.hl = P.hlNext || ''; P.hlNext = '';
+  P.list = list; P.dk = S.dk; P.i = Math.max(0, Math.min(start || 0, list.length - 1)); P.notes = false; P.hl = P.hlNext || ''; P.hlNext = '';
   const el = document.createElement('div'); el.id = 'pres'; P.el = el;
   el.innerHTML = `<div class="prog"></div><div class="stage"><div class="stg"></div></div>
     <button class="side l" data-a="prev">${ic('_l')}</button><button class="side r" data-a="next">${ic('_r')}</button>
@@ -1238,7 +1366,7 @@ function closePresent() {
   P.el.remove(); P.el = null;
   document.removeEventListener('keydown', presKey); window.removeEventListener('resize', layoutP);
   if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-  if (S.view === 'home' && $('#view')) renderHome();
+  if ((S.view === 'home' || S.view === 'expo') && $('#view')) renderHome();
 }
 function presKey(e) {
   if (!P.el || document.querySelector('.sov') || /INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '')) return;
@@ -1263,7 +1391,7 @@ function showP(dir) {
   $('.prog', P.el).style.width = ((P.i + 1) / P.list.length * 100) + '%';
   const nt = $('.notes', P.el); nt.classList.toggle('hidden', !P.notes);
   nt.innerHTML = `<b>Notas do apresentador</b>${s.notas ? fmt(s.notas) : '<span style="opacity:.6">Sem notas neste slide.</span>'}`;
-  if (S.sess) lsSet(LS.pos + S.sess.login, P.i);
+  if (S.sess && P.dk === S.dk) lsSet(LS.pos + S.dk + '.' + S.sess.login, P.i);
 }
 function layoutP() {
   if (!P.el) return;
@@ -1307,6 +1435,7 @@ function renderEditor() {
         <button class="btn sm danger" id="bDel" title="Apagar o slide selecionado">${ic('_trash')}Apagar</button></div>
       <div class="items" id="edList"></div></aside>
     <section class="pane prev"><div class="bar">
+        <div class="dsw" id="edDeck">${Object.entries(DECKS).map(([k, d]) => `<button data-k="${k}" class="${S.dk === k ? 'on' : ''}">${d.n}</button>`).join('')}</div>
         <button class="btn pri" id="bSave" disabled>${ic('_save')}Salvar</button>
         <button class="btn" id="bPlay">${ic('_play')}Apresentar daqui</button>
         <button class="btn sm" id="bMore">${ic('_down2')}Backup</button>
@@ -1322,6 +1451,11 @@ function renderEditor() {
   $('#bDel').onclick = () => deleteSlide(S.sel);
   $('#bDel2').onclick = () => deleteSlide(S.sel);
   $('#bSave').onclick = saveDeck;
+  $$('#edDeck button').forEach(b => b.onclick = async () => {
+    if (b.dataset.k === S.dk) return;
+    try { await useDeck(b.dataset.k); } catch (e) { return toast(e.message, 'err'); }
+    renderEditor();
+  });
   $('#bPlay').onclick = () => { const act = S.draft.filter(s => s.ativo !== false); const cur = curSlide(); const i = act.indexOf(cur); openPresent(act.length ? act : S.draft, i < 0 ? 0 : i); };
   $('#bMore').onclick = backupMenu;
   setDirty(S.dirty);
@@ -1337,6 +1471,7 @@ function newSlide(layout) {
   if (layout === 'destaque') base.destaque = 'Uma mensagem curta e forte.';
   if (layout === 'secao') { base.destaque = '06'; base.secao = 'Seção'; base.titulo = 'Nova seção'; }
   if (layout === 'proibidos') base.itens.forEach(i => i.k = 'proibido');
+  if (layout === 'compara') base.itens = [{ t: '', k: 'certo', i: '', img: '', imgId: '' }, { t: '', k: 'errado', i: '', img: '', imgId: '' }];
   return base;
 }
 async function addSlide() {
@@ -1404,7 +1539,7 @@ const iconOptions = sel => `<option value="">— sem ícone —</option>` + Obje
 
 function renderEdForm() {
   const s = curSlide(), L = LAYOUTS[s.layout] || LAYOUTS.lista, f = $('#edForm');
-  const tooMany = L.itens && ((s.layout === 'checklist' && s.itens.length > 16) || (s.layout === 'passos' && s.itens.length > 5) || (s.layout === 'tela' && s.itens.length > 8) || (!['checklist', 'passos', 'tela'].includes(s.layout) && s.itens.length > 8));
+  const tooMany = L.itens && ((s.layout === 'checklist' && s.itens.length > 16) || (s.layout === 'passos' && s.itens.length > 5) || (s.layout === 'tela' && s.itens.length > 8) || (s.layout === 'compara' && s.itens.length > 3) || (!['checklist', 'passos', 'tela', 'compara'].includes(s.layout) && s.itens.length > 8));
   f.innerHTML = `
     <h4>${ic('_edit', 'width="18" height="18"')}Slide ${S.sel + 1}</h4>
     <div class="row2">
@@ -1414,15 +1549,15 @@ function renderEdForm() {
     <div class="fld"><span>Cor do slide</span><div class="colors">${Object.entries(PAL).map(([k, p]) => `<button class="sw ${s.cor === k ? 'on' : ''}" data-c="${k}" title="${p.n}" style="background:${p.ac}"></button>`).join('')}</div></div>
     <label class="fld"><span>${s.layout === 'secao' ? 'Rótulo acima do título' : 'Etiqueta da seção (topo)'}</span><input class="inp" data-f="secao" value="${esc(s.secao)}" placeholder="Ex.: 01 · Vendas e Atendimento"></label>
     <label class="fld"><span>Título</span><textarea class="inp" data-f="titulo" rows="2">${esc(s.titulo)}</textarea></label>
-    ${['capa', 'secao', 'lista', 'agenda', 'citacao', 'passos', 'proibidos', 'checklist', 'encerramento', 'numero'].includes(s.layout) ? `<label class="fld"><span>Subtítulo</span><textarea class="inp" data-f="subtitulo" rows="2">${esc(s.subtitulo)}</textarea></label>` : ''}
+    ${['capa', 'secao', 'lista', 'agenda', 'citacao', 'passos', 'proibidos', 'checklist', 'encerramento', 'numero', 'tela', 'compara'].includes(s.layout) ? `<label class="fld"><span>Subtítulo</span><textarea class="inp" data-f="subtitulo" rows="2">${esc(s.subtitulo)}</textarea></label>` : ''}
     ${L.dz ? `<label class="fld"><span>${L.dz[0]}</span><textarea class="inp" data-f="destaque" rows="2" placeholder="${esc(L.dz[1])}">${esc(s.destaque)}</textarea></label>` : ''}
     ${L.dl ? `<label class="fld"><span>${L.dl}</span><input class="inp" data-f="destaqueLegenda" value="${esc(s.destaqueLegenda)}"></label>` : ''}
     ${!['agenda', 'encerramento', 'checklist'].includes(s.layout) ? `<label class="fld"><span>Ícone do slide</span><div style="display:flex;gap:8px;align-items:center"><div class="itm" style="padding:0;margin:0;border:0;background:none"><div class="ipv" id="slIcPv">${s.icone ? ic(s.icone) : ''}</div></div><select class="inp" data-f="icone">${iconOptions(s.icone)}</select></div></label>` : ''}
     ${L.img ? imageBlock(s) : ''}
-    ${L.itens ? `<hr><h4>Pontos do slide <span class="hint" style="font-family:'Nunito Sans';font-weight:600">(${s.itens.length})</span></h4>
+    ${L.itens ? `<hr><h4>${s.layout === 'compara' ? 'Fotos do slide' : 'Pontos do slide'} <span class="hint" style="font-family:'Nunito Sans';font-weight:600">(${s.itens.length})</span></h4>
       ${tooMany ? '<div class="warn">Muitos itens deixam o slide carregado. Considere dividir em dois slides.</div>' : ''}
       <div id="edItens">${s.itens.map((it, i) => itemBlock(s, it, i)).join('')}</div>
-      <button class="btn sm" id="bAddIt">${ic('_plus')}Adicionar ponto</button>` : ''}
+      <button class="btn sm" id="bAddIt">${ic('_plus')}${s.layout === 'compara' ? 'Adicionar foto' : 'Adicionar ponto'}</button>` : ''}
     <hr><label class="fld"><span>Notas do apresentador</span><textarea class="inp" data-f="notas" rows="3" placeholder="Aparece só ao apertar N durante a apresentação">${esc(s.notas)}</textarea></label>`;
 
   $$('[data-f]', f).forEach(el => {
@@ -1441,7 +1576,7 @@ function renderEdForm() {
     const i = +el.closest('.itm').dataset.i, k = el.dataset.it;
     el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', () => {
       s.itens[i][k] = el.value;
-      if (k === 'i' || k === 'k') { const pv = $('.ipv', el.closest('.itm')); pv.innerHTML = ic(s.itens[i].k === 'proibido' ? 'ban' : (s.itens[i].i || 'check')); }
+      if ((k === 'i' || k === 'k') && $('.ipv', el.closest('.itm'))) { const pv = $('.ipv', el.closest('.itm')); pv.innerHTML = ic(s.itens[i].k === 'proibido' ? 'ban' : (s.itens[i].i || 'check')); }
       if (k === 'k' && s.layout === 'tela') renderEdForm();
       if (k === 't') { const c = $('.cnt', el.closest('.itm')); c.textContent = el.value.replace(/\*\*/g, '').length + ' caracteres'; c.classList.toggle('long', el.value.replace(/\*\*/g, '').length > 100); }
       liveUpdate();
@@ -1452,11 +1587,13 @@ function renderEdForm() {
     if (a === 'del') s.itens.splice(i, 1);
     if (a === 'up' && i > 0) [s.itens[i - 1], s.itens[i]] = [s.itens[i], s.itens[i - 1]];
     if (a === 'down' && i < s.itens.length - 1) [s.itens[i + 1], s.itens[i]] = [s.itens[i], s.itens[i + 1]];
+    if (a === 'foto') { S.upItem = i; $('#fileImg').click(); return; }
+    if (a === 'rmfoto') { s.itens[i].img = ''; s.itens[i].imgId = ''; }
     renderEdForm(); liveUpdate();
   });
   const add = $('#bAddIt');
-  if (add) add.onclick = () => { s.itens.push({ t: '', k: s.layout === 'proibidos' ? 'proibido' : 'normal', i: 'check' }); renderEdForm(); liveUpdate(); const t = $$('#edItens textarea'); if (t.length) t[t.length - 1].focus(); };
-  const up = $('#bImg'); if (up) up.onclick = () => $('#fileImg').click();
+  if (add) add.onclick = () => { s.itens.push(s.layout === 'compara' ? { t: '', k: s.itens.length ? 'errado' : 'certo', i: '', img: '', imgId: '' } : { t: '', k: s.layout === 'proibidos' ? 'proibido' : 'normal', i: 'check' }); renderEdForm(); liveUpdate(); const t = $$('#edItens textarea'); if (t.length) t[t.length - 1].focus(); };
+  const up = $('#bImg'); if (up) up.onclick = () => { S.upItem = null; $('#fileImg').click(); };
   const rm = $('#bImgRm'); if (rm) rm.onclick = () => { s.imgUrl = ''; s.imgId = ''; s.imgPos = 'removida'; renderEdForm(); liveUpdate(); };
 }
 function imageBlock(s) {
@@ -1472,6 +1609,14 @@ function imageBlock(s) {
 }
 function itemBlock(s, it, i) {
   const len = String(it.t || '').replace(/\*\*/g, '').length;
+  if (s.layout === 'compara') return `<div class="itm" data-i="${i}">
+    <div class="r"><select class="inp" data-it="k" style="flex:1">${[['certo', '✓ Certo'], ['errado', '✗ Errado'], ['normal', 'Sem marcação']].map(([v, t]) => `<option value="${v}" ${(it.k === v || (v === 'normal' && !['certo', 'errado'].includes(it.k))) ? 'selected' : ''}>${t}</option>`).join('')}</select>
+      <button class="btn sm icon" data-ia="up" title="Subir">${ic('_up')}</button><button class="btn sm icon" data-ia="down" title="Descer">${ic('_down')}</button>
+      <button class="btn sm icon danger" data-ia="del" title="Remover">${ic('_x')}</button></div>
+    <div class="ibx">${it.img ? `<img src="${esc(it.img)}" referrerpolicy="no-referrer" alt="">` : '<div class="ph0">Sem foto</div>'}
+      <div class="bt"><button class="btn sm pri" data-ia="foto">${ic('_up2')}${it.img ? 'Trocar foto' : 'Enviar foto'}</button>${it.img ? `<button class="btn sm danger" data-ia="rmfoto">${ic('_trash')}Remover</button>` : ''}</div></div>
+    <textarea class="inp" data-it="t" rows="2" placeholder="Legenda curta (use **texto** para destacar)">${esc(it.t)}</textarea>
+    <div class="cnt ${len > 110 ? 'long' : ''}">${len} caracteres</div></div>`;
   const showType = !['proibidos', 'checklist', 'agenda', 'passos'].includes(s.layout);
   const showIcon = !['proibidos', 'checklist'].includes(s.layout);
   return `<div class="itm" data-i="${i}">
@@ -1490,10 +1635,12 @@ $('#fileImg').addEventListener('change', async e => {
   const s = curSlide(); if (!s) return;
   toast('Enviando foto...');
   try {
-    const { b64, mime } = await compressImage(file, 1920, 0.85);
+    const { b64, mime } = await compressImage(file, S.upItem != null ? 1400 : 1920, 0.85);
     const r = await api('foto.upload', { base64: b64, mime, slideId: s.id });
     if (!r.ok) throw new Error(r.erro);
-    s.imgId = r.id; s.imgUrl = r.url; if (!s.imgPos || s.imgPos === 'removida') s.imgPos = 'direita';
+    const it = S.upItem != null ? s.itens[S.upItem] : null; S.upItem = null;
+    if (it) { it.img = r.url; it.imgId = r.id; }
+    else { s.imgId = r.id; s.imgUrl = r.url; if (!s.imgPos || s.imgPos === 'removida') s.imgPos = 'direita'; }
     renderEdForm(); liveUpdate(); toast('Foto enviada. Lembre de salvar.', 'ok');
   } catch (err) { toast('Erro ao enviar: ' + err.message, 'err'); }
 });
@@ -1514,13 +1661,13 @@ function compressImage(file, maxW, q) {
 async function saveDeck(force) {
   const b = $('#bSave'); if (b) { b.disabled = true; b.innerHTML = ic('_save') + 'Salvando...'; }
   try {
-    const r = await api('slides.save', { slides: S.draft, baseVersion: S.deck.versao, force: force === true });
+    const r = await api('slides.save', { deck: S.dk, slides: S.draft, baseVersion: S.deck.versao, force: force === true });
     if (r.conflito) {
       const v = await modal('Outra pessoa salvou antes', `<p>A apresentação foi alterada por <b>${esc(r.atualizadoPor || 'outro usuário')}</b> em ${esc(r.atualizadoEm || '')}, depois que você abriu o editor.</p>
         <p>Você pode <b>sobrescrever</b> com a sua versão ou <b>recarregar</b> a versão mais recente (perdendo suas alterações).</p>`,
         [{ t: 'Cancelar', v: null }, { t: 'Recarregar a mais recente', v: 'reload' }, { t: 'Sobrescrever', v: 'force', c: 'rosa' }]);
       if (v === 'force') return saveDeck(true);
-      if (v === 'reload') { await loadDeck(); renderEditor(); toast('Versão mais recente carregada.'); }
+      if (v === 'reload') { delete S.store[S.dk]; await ensureDeck(S.dk); renderEditor(); toast('Versão mais recente carregada.'); }
       setDirty(S.dirty); return;
     }
     if (!r.ok) throw new Error(r.erro);
@@ -1535,11 +1682,13 @@ async function backupMenu() {
     [{ t: 'Fechar', v: null }, { t: 'Restaurar conteúdo original do manual', v: 'seed' }, { t: 'Importar .json', v: 'imp' }, { t: 'Baixar .json', v: 'exp', c: 'pri' }]);
   if (v === 'exp') {
     const blob = new Blob([JSON.stringify({ sistema: 'Miashop Integração', data: new Date().toISOString(), slides: S.draft }, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `integracao-miashop-${new Date().toISOString().slice(0, 10)}.json`; a.click();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${S.dk}-miashop-${new Date().toISOString().slice(0, 10)}.json`; a.click();
   } else if (v === 'imp') $('#fileJson').click();
   else if (v === 'seed') {
     if (!(await ask('Restaurar conteúdo original?', 'Os slides atuais do editor serão substituídos pelo conteúdo padrão do manual (fotos enviadas saem dos slides).', 'Restaurar', true))) return;
-    S.draft = seedDeck(); S.sel = 0; setDirty(true); renderEditor();
+    if (S.dk === 'exposicao') { const sl = await seedExposicao(S.store.exposicao, true); if (!sl) return; S.draft = sl; }
+    else S.draft = seedDeck();
+    S.sel = 0; setDirty(true); renderEditor();
   }
 }
 $('#fileJson').addEventListener('change', async e => {
