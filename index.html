@@ -234,6 +234,13 @@ table.t .acts{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 @media(max-width:1000px){.rgrid{grid-template-columns:1fr}.rprev{position:static}}
 @media(max-width:640px){.rcard{flex-wrap:wrap}.rcard .acts{width:100%}}
 
+.drop{display:flex;align-items:center;gap:14px;border:2px dashed #CFCBC2;border-radius:14px;padding:14px 16px;margin:0 0 16px;cursor:pointer;background:var(--soft);transition:.15s}
+.drop:hover,.drop.over{border-color:var(--rosa);background:#FFF5FA}
+.drop .di{width:44px;height:44px;flex:none;border-radius:12px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;color:var(--azul)}
+.drop .di svg{width:24px;height:24px}
+.drop b{display:block;font-size:14px}.drop span{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+.pvl{max-height:44vh;overflow:auto;margin:0 0 12px;padding:10px 12px 10px 34px;background:var(--soft);border-radius:10px;font-size:14px;line-height:1.55}
+
 /* ---------- busca ---------- */
 .sbtn{display:flex;align-items:center;gap:10px;min-width:230px;border:1px solid var(--line);background:var(--soft);border-radius:10px;padding:8px 12px;color:var(--muted);cursor:pointer;font-weight:700;font-size:14px}
 .sbtn:hover{border-color:#cfcbc2;color:var(--ink)}
@@ -1546,6 +1553,157 @@ function novaReuniao() {
 function novoTopico(i) { return { id: 't' + uid(), titulo: '', subtitulo: '', icone: '', cor: CICLO[i % CICLO.length], itens: [] }; }
 const ICONES_TOP = ['target', 'chart', 'users', 'megaphone', 'package', 'wallet', 'store', 'shield', 'calendar', 'bulb', 'trending', 'award'];
 
+/* ---------- IMPORTAR PAUTA DE UM WORD (.docx) ----------
+   Lê o arquivo no próprio navegador (sem enviar a lugar nenhum) e separa em tópicos:
+   títulos do Word, linhas numeradas ("1 - ...") ou linhas curtas em negrito viram TÓPICOS;
+   o resto vira PONTOS do tópico. Sem títulos no arquivo, cada linha vira um tópico. */
+async function unzipArquivo(buf, alvo) {
+  const dv = new DataView(buf), u8 = new Uint8Array(buf);
+  let e = buf.byteLength - 22; while (e >= 0 && dv.getUint32(e, true) !== 0x06054b50) e--;
+  if (e < 0) throw new Error('arquivo não é um .docx válido');
+  const n = dv.getUint16(e + 10, true); let p = dv.getUint32(e + 16, true);
+  for (let i = 0; i < n; i++) {
+    if (dv.getUint32(p, true) !== 0x02014b50) break;
+    const metodo = dv.getUint16(p + 10, true), tam = dv.getUint32(p + 20, true);
+    const nl = dv.getUint16(p + 28, true), xl = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), loc = dv.getUint32(p + 42, true);
+    const nome = new TextDecoder().decode(u8.subarray(p + 46, p + 46 + nl));
+    if (nome === alvo) {
+      const ini = loc + 30 + dv.getUint16(loc + 26, true) + dv.getUint16(loc + 28, true);
+      const dados = u8.subarray(ini, ini + tam);
+      if (metodo === 0) return new TextDecoder().decode(dados);
+      if (typeof DecompressionStream === 'undefined') throw new Error('navegador sem suporte: use o Chrome atualizado');
+      const st = new Blob([dados]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+      return await new Response(st).text();
+    }
+    p += 46 + nl + xl + cl;
+  }
+  throw new Error('conteúdo do Word não encontrado');
+}
+function paragrafosDocx(xml) {
+  const doc = new DOMParser().parseFromString(xml, 'application/xml');
+  const out = [];
+  [...doc.getElementsByTagName('w:p')].forEach(p => {
+    const sty = (p.getElementsByTagName('w:pStyle')[0] || { getAttribute: () => '' }).getAttribute('w:val') || '';
+    const lista = p.getElementsByTagName('w:numPr').length > 0;
+    let txt = '', negrito = '', todo = true, algum = false;
+    [...p.getElementsByTagName('w:r')].forEach(r => {
+      let t = '';
+      [...r.childNodes].forEach(c => { if (c.nodeName === 'w:t') t += c.textContent; else if (c.nodeName === 'w:tab' || c.nodeName === 'w:br') t += ' '; });
+      if (!t) return;
+      const b = r.getElementsByTagName('w:b')[0];
+      const bold = !!b && !/^(0|false)$/i.test(b.getAttribute('w:val') || '');
+      if (t.trim()) { algum = true; if (!bold) todo = false; }
+      negrito += bold && t.trim() ? '\u0001' + t + '\u0002' : t; txt += t;
+    });
+    const md = negrito.replace(/\u0002\u0001/g, '').replace(/\u0001(\s*)([^\u0002]*?)(\s*)\u0002/g, (m, a, b, c) => b ? `${a}**${b}**${c}` : a + c);
+    if (txt.trim()) out.push({ txt: txt.replace(/\s+/g, ' ').trim(), md: md.replace(/\s+/g, ' ').trim(), sty, lista, negrito: algum && todo });
+  });
+  return out;
+}
+function tituloCurto(t) {
+  t = t.replace(/[:;.]+$/, '').trim();
+  if (t.length <= 60) return t;
+  for (const sep of [' pode ', ' deve ', ' são ', ' é ', ', ', ' - ', ' – ']) {
+    const i = t.toLowerCase().indexOf(sep); if (i >= 6 && i <= 50) return t.slice(0, i).trim();
+  }
+  return t.split(' ').slice(0, 6).join(' ');
+}
+function pautaDeParagrafos(ps) {
+  const RE_NUM = /^\s*(\d{1,2})\s*(?:[-–—]|[.)](?=\s))\s*/;
+  const ehTituloWord = p => /^(heading|t[ií]tulo|ttulo|titulo)\s*\d/i.test(p.sty);
+  const ehTituloDoc = p => /^(title|t[ií]tulo$|ttulo$)/i.test(p.sty);
+  const ehRotulo = p => p.negrito && /:$/.test(p.txt) && p.txt.length <= 22;
+  const ehTopico = p => ehTituloWord(p) || (!p.lista && RE_NUM.test(p.txt)) || (p.negrito && p.txt.length <= 90 && !/[;,]$/.test(p.txt) && !ehRotulo(p));
+  const limpa = t => t.replace(/^[•●▪◦·\-–—*]\s*/, '').replace(/\s*;$/, '').trim();
+  let titulo = '';
+  let corpo = ps.slice();
+  if (corpo.length && (ehTituloDoc(corpo[0]) || (corpo.length > 1 && (corpo[0].negrito || corpo[0].txt === corpo[0].txt.toUpperCase()) && !RE_NUM.test(corpo[0].txt) && corpo.slice(1).some(ehTopico)))) {
+    titulo = corpo.shift().txt.replace(/[:.]+$/, '');
+  }
+  const temTopicos = corpo.some(ehTopico);
+  const tops = [];
+  if (!temTopicos) {
+    corpo.forEach(p => { const t = limpa(p.md); if (t) tops.push({ titulo: tituloCurto(limpa(p.txt)), itens: t.replace(/\*\*/g, '').length > 60 ? [{ t }] : [] }); });
+    return { titulo, topicos: tops };
+  }
+  let cur = null, rotulo = '';
+  const ponto = t => {
+    if (!cur) { cur = { titulo: 'Avisos gerais', itens: [] }; tops.push(cur); }
+    if (rotulo) { t = `**${rotulo}** ${t}`; rotulo = ''; }
+    cur.itens.push({ t });
+  };
+  corpo.forEach(p => {
+    if (ehTopico(p)) {
+      if (rotulo) { ponto(''); }
+      let txt = p.txt.replace(RE_NUM, ''), md = p.md.replace(/^\*\*/, '').replace(RE_NUM, '');
+      md = (p.md.startsWith('**') && !md.startsWith('**') ? '**' : '') + md;
+      let resto = '';
+      const dp = txt.indexOf(':');
+      if (dp > 2 && dp < txt.length - 1) { resto = txt.slice(dp + 1).trim(); txt = txt.slice(0, dp); }
+      const titulo = tituloCurto(txt);
+      cur = { titulo, itens: [] }; tops.push(cur);
+      if (resto) cur.itens.push({ t: resto.replace(/\s*;$/, '') });
+      else if (titulo.length + 3 < txt.replace(/[:;.]+$/, '').length) cur.itens.push({ t: txt.replace(/\s*;$/, '') });
+      return;
+    }
+    if (ehRotulo(p)) { if (rotulo) { const r = rotulo; rotulo = ''; ponto(`**${r}**`); } rotulo = p.txt.replace(/:$/, ''); return; }
+    const t = limpa(p.md); if (t) ponto(t.replace(/^\*\*\*\*/, ''));
+  });
+  if (rotulo) { const r = rotulo; rotulo = ''; ponto(`**${r}**`); }
+  tops.forEach(t => t.itens = t.itens.filter(x => x.t.replace(/\*\*/g, '').trim()));
+  // tópicos muito longos viram 2+ slides
+  const final = [];
+  tops.forEach(t => {
+    if (t.itens.length <= 7) return final.push(t);
+    const partes = Math.ceil(t.itens.length / 6);
+    for (let i = 0; i < partes; i++) final.push({ titulo: `${t.titulo} (${i + 1}/${partes})`, itens: t.itens.slice(i * 6, i * 6 + 6) });
+  });
+  return { titulo, topicos: final };
+}
+async function lerPautaArquivo(file) {
+  const nome = file.name || '';
+  if (/\.doc$/i.test(nome)) throw new Error('arquivo .doc antigo: no Word, use "Salvar como" → Documento do Word (.docx)');
+  if (/\.txt$/i.test(nome) || file.type === 'text/plain') {
+    const ps = (await file.text()).split(/\r?\n/).map(t => t.trim()).filter(Boolean).map(t => ({ txt: t, md: t, sty: '', lista: /^[•●▪◦·\-–—*]\s/.test(t), negrito: false }));
+    return pautaDeParagrafos(ps);
+  }
+  if (!/\.docx$/i.test(nome)) throw new Error('envie um arquivo do Word (.docx)');
+  return pautaDeParagrafos(paragrafosDocx(await unzipArquivo(await file.arrayBuffer(), 'word/document.xml')));
+}
+/* janela de confirmação e aplicação na reunião */
+async function importarPauta(file, m, aoTerminar) {
+  let pauta;
+  try { pauta = await lerPautaArquivo(file); } catch (e) { return toast('Não consegui ler o arquivo: ' + e.message, 'err'); }
+  if (!pauta.topicos.length) return toast('Não encontrei tópicos nesse arquivo.', 'err');
+  const nPts = pauta.topicos.reduce((a, t) => a + t.itens.length, 0);
+  const temAtuais = m.topicos.some(t => t.titulo || t.itens.length);
+  const prev = `<p>Encontrei <b>${pauta.topicos.length} tópico${pauta.topicos.length === 1 ? '' : 's'}</b> e <b>${nPts} ponto${nPts === 1 ? '' : 's'}</b> em <b>${esc(file.name)}</b>${pauta.titulo ? ` (“${esc(pauta.titulo)}”)` : ''}. Cada tópico vira um slide.</p>
+    <ol class="pvl">${pauta.topicos.map(t => `<li><b>${esc(t.titulo)}</b>${t.itens.length ? `<span class="hint"> · ${t.itens.length} ponto${t.itens.length === 1 ? '' : 's'}</span>` : ''}</li>`).join('')}</ol>
+    <p class="hint">Depois dá para ajustar tudo: no formulário ou clicando nos textos durante a apresentação.</p>`;
+  const v = await modal('Pauta encontrada no arquivo', prev, temAtuais
+    ? [{ t: 'Cancelar', v: null }, { t: 'Adicionar aos tópicos atuais', v: 'add' }, { t: 'Substituir os tópicos', v: 'rep', c: 'rosa' }]
+    : [{ t: 'Cancelar', v: null }, { t: 'Criar os slides', v: 'rep', c: 'rosa' }]);
+  if (!v) return;
+  const novos = pauta.topicos.map((t, i) => Object.assign(novoTopico((v === 'add' ? m.topicos.length : 0) + i), { titulo: t.titulo, itens: t.itens }));
+  if (v === 'rep') m.topicos = novos; else m.topicos = m.topicos.filter(t => t.titulo || t.itens.length).concat(novos);
+  if (pauta.titulo && !m.subtitulo) m.subtitulo = pauta.titulo === pauta.titulo.toUpperCase()
+    ? pauta.titulo.toLowerCase().split(' ').map((w, i) => w.length <= 3 && i > 0 && /^[a-zà-ú]{2,3}$/.test(w) && !['de', 'da', 'do', 'das', 'dos', 'e', 'em', 'na', 'no', 'a', 'o', 'para'].includes(w) ? w.toUpperCase() : (i === 0 || !['de', 'da', 'do', 'das', 'dos', 'e', 'em', 'na', 'no', 'a', 'o', 'para'].includes(w)) ? w.charAt(0).toUpperCase() + w.slice(1) : w).join(' ')
+    : pauta.titulo;
+  toast(`${novos.length} tópico${novos.length === 1 ? '' : 's'} importado${novos.length === 1 ? '' : 's'} do arquivo.`, 'ok');
+  aoTerminar();
+}
+function ligarDrop(zona, aoArquivo) {
+  if (!zona) return;
+  const inp = zona.querySelector('input[type=file]');
+  zona.addEventListener('click', e => { if (e.target !== inp) inp.click(); });
+  inp.addEventListener('change', () => { const f = inp.files[0]; inp.value = ''; if (f) aoArquivo(f); });
+  ['dragenter', 'dragover'].forEach(ev => zona.addEventListener(ev, e => { e.preventDefault(); zona.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(ev => zona.addEventListener(ev, e => { e.preventDefault(); zona.classList.remove('over'); }));
+  zona.addEventListener('drop', e => { const f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f) aoArquivo(f); });
+}
+const dropHTML = (id, txt) => `<div class="drop" id="${id}"><input type="file" accept=".docx,.txt,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden>
+  <div class="di">${ic('file')}</div><div><b>${txt}</b><span>Arraste o arquivo do Word (.docx) aqui ou clique para escolher</span></div></div>`;
+
 /* monta os slides da reunião (não são guardados: são gerados a partir dos tópicos) */
 function slidesReuniao(m) {
   const mk = 'Reunião de Gerentes · ' + fmtData(m.data);
@@ -1703,6 +1861,7 @@ async function renderReunioes() {
   v.innerHTML = `<div class="rhd"><div><span class="hint" style="font-weight:800;letter-spacing:.08em;text-transform:uppercase">Histórico</span><h2>Reuniões de Gerentes</h2>
       <p class="hint" style="margin:6px 0 0">Monte a pauta em tópicos e o sistema cria os slides para passar na TV.</p></div>
       <button class="btn rosa" id="bNovaR">${ic('_plus')}Nova reunião</button></div>
+    ${dropHTML('rDropNova', 'Nova reunião a partir de um arquivo Word')}
     ${lst.length ? `<div class="rlist">${lst.map(m => { const d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(m.data || '') || [];
       const futura = String(m.data) >= hoje && m.status !== 'Realizada';
       return `<div class="rcard" data-id="${esc(m.id)}"><div class="rdt"><b>${d[3] || '--'}</b><span>${d[2] ? ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'][+d[2] - 1] : ''}</span><small>${d[1] || ''}</small></div>
@@ -1712,6 +1871,7 @@ async function renderReunioes() {
         <div class="acts"><button class="btn sm" data-r="abrir">${ic('_edit')}Abrir</button><button class="btn sm pri" data-r="tv">${ic('_play')}Apresentar</button></div></div>`; }).join('')}</div>`
     : `<div class="loading" style="min-height:40vh"><div><p><b>Nenhuma reunião ainda.</b></p><p>Clique em <b>Nova reunião</b> para montar a primeira pauta.</p></div></div>`}`;
   $('#bNovaR').onclick = () => { R_.cur = novaReuniao(); R_.base = ''; renderReuniao(true); };
+  ligarDrop($('#rDropNova'), f => { const m = novaReuniao(); m.topicos = []; importarPauta(f, m, () => { R_.cur = m; R_.base = ''; renderReuniao(); agendarSalvar(); }); });
   $$('.rcard', v).forEach(c => c.onclick = async e => {
     const b = e.target.closest('[data-r]'); const id = c.dataset.id;
     await abrirReuniao(id);
@@ -1740,7 +1900,8 @@ function renderReuniao(nova) {
           <label class="fld"><span>Status</span><select class="inp" data-m="status">${['Planejada', 'Realizada'].map(x => `<option ${m.status === x ? 'selected' : ''}>${x}</option>`).join('')}</select></label></div>
         <label class="fld"><span>Título</span><input class="inp" data-m="titulo" value="${esc(m.titulo)}" placeholder="Reunião de Gerentes"></label>
         <label class="fld"><span>Objetivo da reunião (aparece na capa)</span><input class="inp" data-m="subtitulo" value="${esc(m.subtitulo)}" placeholder="Ex.: Resultados de novembro e plano para o Natal"></label>
-        <hr><h4>Tópicos da pauta <span class="hint" style="font-family:'Nunito Sans';font-weight:600">(${m.topicos.length})</span></h4>
+        <hr>${dropHTML('rDrop', 'Importar a pauta de um arquivo Word')}
+        <h4>Tópicos da pauta <span class="hint" style="font-family:'Nunito Sans';font-weight:600">(${m.topicos.length})</span></h4>
         <p class="hint" style="margin:-6px 0 12px">Cada tópico vira um slide. Escreva um ponto por linha — use **texto** para destacar.</p>
         <div id="rTops">${m.topicos.map((t, i) => `<div class="itm rtop" data-i="${i}" style="border-left:5px solid ${pal(t.cor || CICLO[i % CICLO.length]).ac}">
           <div class="r"><b class="rn">Tópico ${i + 1}</b><div class="ipv">${ic(t.icone || ICONES_TOP[i % ICONES_TOP.length])}</div>
@@ -1779,6 +1940,7 @@ function renderReuniao(nova) {
     else return;
     mudou(true);
   });
+  ligarDrop($('#rDrop'), f => importarPauta(f, m, () => mudou(true)));
   $('#bAddTop').onclick = () => { m.topicos.push(novoTopico(m.topicos.length)); mudou(true); const t = $$('#rTops [data-t=titulo]'); if (t.length) t[t.length - 1].focus(); };
   $('#bVoltarR').onclick = async () => { await sairDaReuniao(); renderReunioes(); };
   $('#bTvR').onclick = () => openPresent(slidesReuniao(m), 0, m);
