@@ -224,7 +224,7 @@ table.t .acts{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 .rdt{width:64px;flex:none;text-align:center;border-radius:12px;background:var(--soft);padding:8px 0;line-height:1.05}
 .rdt b{display:block;font-family:Jost,sans-serif;font-size:26px}.rdt span{display:block;font-weight:800;font-size:13px;text-transform:uppercase;color:var(--rosa)}.rdt small{color:var(--muted);font-size:11px}
 .rinfo{flex:1;min-width:0}.rinfo .rt{font-weight:800;font-size:16px;margin-bottom:3px}
-.rcard .acts{display:flex;gap:6px}
+.rcard .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .bdg.pl{background:#FDEBDC;color:#BE5C0D}
 .rgrid{display:grid;grid-template-columns:minmax(0,460px) minmax(0,1fr);gap:18px;align-items:start}
 .rform{padding:20px}.rform h4{font-size:16px;margin:4px 0 12px}.rform hr{border:0;border-top:1px solid var(--line);margin:18px 0}
@@ -1868,15 +1868,43 @@ async function renderReunioes() {
         <div class="rinfo"><div class="rt">${esc(m.titulo || 'Reunião de Gerentes')}</div>
           <div class="hint">${esc(fmtData(m.data, true))} · ${m.topicos || 0} tópico${m.topicos === 1 ? '' : 's'}${m.atualizadoPor ? ` · atualizado por ${esc(m.atualizadoPor)}` : ''}</div></div>
         <span class="bdg ${m.status === 'Realizada' ? '' : 'pl'}">${m.status === 'Realizada' ? 'REALIZADA' : futura ? 'PLANEJADA' : 'PENDENTE'}</span>
-        <div class="acts"><button class="btn sm" data-r="abrir">${ic('_edit')}Abrir</button><button class="btn sm pri" data-r="tv">${ic('_play')}Apresentar</button></div></div>`; }).join('')}</div>`
+        <div class="acts"><button class="btn sm" data-r="data" title="Alterar a data">${ic('calendar')}Data</button><button class="btn sm" data-r="abrir">${ic('_edit')}Abrir</button><button class="btn sm pri" data-r="tv">${ic('_play')}Apresentar</button><button class="btn sm icon danger" data-r="del" title="Excluir reunião">${ic('_trash')}</button></div></div>`; }).join('')}</div>`
     : `<div class="loading" style="min-height:40vh"><div><p><b>Nenhuma reunião ainda.</b></p><p>Clique em <b>Nova reunião</b> para montar a primeira pauta.</p></div></div>`}`;
   $('#bNovaR').onclick = () => { R_.cur = novaReuniao(); R_.base = ''; renderReuniao(true); };
   ligarDrop($('#rDropNova'), f => { const m = novaReuniao(); m.topicos = []; importarPauta(f, m, () => { R_.cur = m; R_.base = ''; renderReuniao(); agendarSalvar(); }); });
   $$('.rcard', v).forEach(c => c.onclick = async e => {
     const b = e.target.closest('[data-r]'); const id = c.dataset.id;
+    if (b && b.dataset.r === 'data') return alterarDataReuniao(id);
+    if (b && b.dataset.r === 'del') return excluirReuniaoLista(id);
     await abrirReuniao(id);
     if (b && b.dataset.r === 'tv' && R_.cur) openPresent(slidesReuniao(R_.cur), 0, R_.cur);
   });
+}
+/* ações rápidas na lista: alterar a data e excluir */
+async function alterarDataReuniao(id) {
+  const meta = (R_.list || []).find(x => x.id === id) || {};
+  const nova = await modal('Alterar a data da reunião', `<p><b>${esc(meta.titulo || 'Reunião de Gerentes')}</b></p>
+    <label class="fld"><span>Nova data</span><input class="inp" type="date" id="nData" value="${esc(meta.data || hojeISO())}"></label>`,
+    [{ t: 'Cancelar', v: null }, { t: 'Salvar data', c: 'pri', v: ov => $('#nData', ov).value }]);
+  if (!nova || nova === meta.data) return;
+  const g = await api('reunioes.get', { id });
+  if (!g.ok) return toast(g.erro, 'err');
+  const m = g.reuniao;
+  const r = await api('reunioes.save', { baseVersion: m.versao || '', reuniao: {
+    id: m.id, data: nova, titulo: m.titulo, subtitulo: m.subtitulo, status: m.status,
+    topicos: (m.topicos || []).map(t => ({ id: t.id, titulo: t.titulo, subtitulo: t.subtitulo, icone: t.icone, cor: t.cor, itens: t.itens || [] })),
+    combinados: m.combinados || [] } });
+  if (!r.ok) return toast(r.conflito ? 'A reunião acabou de ser alterada por outra pessoa. Tente de novo.' : r.erro, 'err');
+  toast(`Data alterada para ${fmtData(nova, true)}.`, 'ok');
+  renderReunioes();
+}
+async function excluirReuniaoLista(id) {
+  const meta = (R_.list || []).find(x => x.id === id) || {};
+  if (!(await ask('Excluir reunião?', `<b>${esc(meta.titulo || 'Reunião de Gerentes')}</b> de ${esc(fmtData(meta.data, true))} e todos os tópicos serão apagados do histórico. Isso não pode ser desfeito.`, 'Excluir', true))) return;
+  const r = await api('reunioes.delete', { id });
+  if (!r.ok) return toast(r.erro, 'err');
+  toast('Reunião excluída.', 'ok');
+  renderReunioes();
 }
 async function abrirReuniao(id, silencioso) {
   const r = await api('reunioes.get', { id });
