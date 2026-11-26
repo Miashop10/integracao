@@ -1132,6 +1132,20 @@ async function aplicarMigracoes() {
       mudou++;
     } catch (e) { /* tenta de novo no próximo acesso */ }
   }
+  // Regras de quebras: novo slide entre os slides 36 e 37 (uma vez só)
+  if (!S.deck.slides.some(x => x.id === 'quebras2-regras' || String(x.destaqueLegenda || '').includes('quebras-v2'))) {
+    const at = Math.min(36, S.deck.slides.length);
+    if (S.deck.slides[0] && S.deck.slides[0].layout === 'capa' && !S.deck.slides[0].destaqueLegenda) S.deck.slides[0].destaqueLegenda = 'quebras-v2';
+    S.deck.slides.splice(at, 0, { id: 'quebras2-regras', ativo: true, layout: 'lista', cor: 'vinho', secao: '04 · Operações e Gestão',
+      titulo: 'Quebras: regras importantes', subtitulo: '', icone: 'package', destaque: '', destaqueLegenda: '',
+      imgId: '', imgUrl: '', imgPos: 'direita', notas: 'Reforçar com o gerente: fornecedor sempre de uma vez só e vidro quebrado é descartado na loja.',
+      itens: [
+        { k: 'normal', i: 'package', t: 'Identifique as **caixas de quebras** com o **nome da sua filial**' },
+        { k: 'destaque', i: 'truck', t: 'Lance **todas as quebras de um fornecedor de uma só vez** — não lançar uma parte num dia e o restante em outro' },
+        { k: 'normal', i: 'search', t: 'Passe à **auditoria** as **quantidades dos códigos solicitados**, contando também o que está no **estoque** e na **vitrine**' },
+        { k: 'proibido', i: 'ban', t: 'Enviar **vidros quebrados** ao CD — eles devem ser **descartados** na loja' }] });
+    mudou++;
+  }
   if (!mudou) return;
   const s = await api('slides.save', { deck: 'integracao', slides: S.deck.slides, baseVersion: S.deck.versao });
   if (s.ok) { S.deck.versao = s.versao; S.deck.por = s.atualizadoPor; S.deck.em = s.atualizadoEm; toast(mudou + ' slide(s) atualizados.', 'ok'); }
